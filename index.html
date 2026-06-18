@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>OpenTab</title>
+    <meta name="description" content="A simple open-source start page for links, focus, routine, and a goofy earnings counter.">
+    <link rel="stylesheet" href="./styles.css">
+    <script defer src="./vendor/three.min.js"></script>
+    <script defer src="./app.js"></script>
+  </head>
+  <body>
+    <canvas id="spaceCanvas" aria-hidden="true"></canvas>
+    <div class="wash" aria-hidden="true"></div>
+
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow" id="dayLine">Today</p>
+          <h1 id="greeting">OpenTab</h1>
+        </div>
+        <nav class="top-actions" aria-label="Start page controls">
+          <a class="icon-button" id="emailButton" href="https://mail.google.com/" title="Open email" aria-label="Open email">@</a>
+          <button class="icon-button" id="settingsButton" type="button" title="Settings" aria-label="Settings">&#9881;</button>
+        </nav>
+      </header>
+
+      <section class="deck-grid" aria-label="OpenTab launchpad">
+        <article class="panel links-panel">
+          <div class="panel-title-row">
+            <div>
+              <p class="panel-kicker">Open</p>
+              <h2>Links</h2>
+            </div>
+            <button class="icon-button small" id="quickAddLink" type="button" title="Add link" aria-label="Add link">+</button>
+          </div>
+          <div id="linkGrid" class="link-grid"></div>
+        </article>
+
+        <article class="panel time-panel">
+          <p class="panel-kicker">Now</p>
+          <time id="clock" class="clock">00:00</time>
+          <p id="dateLine" class="date-line">Today</p>
+          <div class="micro-row">
+            <span id="progressPill">0% workday</span>
+            <span id="routinePill">0 routine</span>
+          </div>
+        </article>
+
+        <article class="panel focus-panel">
+          <div class="panel-title-row">
+            <div>
+              <p class="panel-kicker">Today</p>
+              <h2>Focus</h2>
+            </div>
+            <label class="check-pill" title="Mark focus complete">
+              <input id="focusDone" type="checkbox">
+              <span>won</span>
+            </label>
+          </div>
+          <textarea id="focusInput" rows="5" aria-label="Today's focus" maxlength="260"></textarea>
+        </article>
+
+        <article class="panel routine-panel">
+          <div class="panel-title-row">
+            <div>
+              <p class="panel-kicker">Daily</p>
+              <h2>Routine</h2>
+            </div>
+            <button class="icon-button small" id="routineReset" type="button" title="Clear today" aria-label="Clear today">&#8634;</button>
+          </div>
+          <div id="routineList" class="routine-list"></div>
+        </article>
+
+        <article class="panel money-panel">
+          <div class="panel-title-row">
+            <div>
+              <p class="panel-kicker">Money</p>
+              <h2>Earned</h2>
+            </div>
+            <span id="netBadge" class="net-badge">today</span>
+          </div>
+          <div class="money-main single">
+            <div>
+              <span class="money-label">earned today</span>
+              <strong id="earnedAmount">$0.00</strong>
+            </div>
+          </div>
+          <div class="money-meta">
+            <span id="workWindow">9:00 AM - 5:00 PM</span>
+            <span id="wageLine">$0/hr</span>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <dialog id="settingsDialog" class="settings-dialog" aria-labelledby="settingsTitle">
+      <form method="dialog" class="settings-shell" id="settingsForm">
+        <header class="settings-header">
+          <div>
+            <p class="panel-kicker">Local</p>
+            <h2 id="settingsTitle">Settings</h2>
+          </div>
+          <button class="icon-button small" value="cancel" type="button" id="closeSettings" title="Close" aria-label="Close">x</button>
+        </header>
+
+        <section class="settings-grid">
+          <label>
+            <span>Name</span>
+            <input id="settingName" type="text" maxlength="32" placeholder="Your name">
+          </label>
+          <label>
+            <span>Email URL</span>
+            <input id="settingEmail" type="url" placeholder="https://mail.google.com/">
+          </label>
+          <label>
+            <span>Hourly wage</span>
+            <input id="settingWage" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00">
+          </label>
+          <label>
+            <span>Work starts</span>
+            <input id="settingStart" type="time">
+          </label>
+          <label>
+            <span>Work ends</span>
+            <input id="settingEnd" type="time">
+          </label>
+        </section>
+
+        <section class="editor-section">
+          <div class="panel-title-row">
+            <h3>Links</h3>
+            <button class="icon-button small" type="button" id="addLinkRow" title="Add link" aria-label="Add link">+</button>
+          </div>
+          <div id="linkEditor" class="editor-list"></div>
+        </section>
+
+        <section class="editor-section">
+          <div class="panel-title-row">
+            <h3>Routine</h3>
+            <button class="icon-button small" type="button" id="addRoutineRow" title="Add routine item" aria-label="Add routine item">+</button>
+          </div>
+          <div id="routineEditor" class="editor-list"></div>
+        </section>
+
+        <footer class="settings-footer">
+          <input id="importFile" class="sr-only" type="file" accept="application/json">
+          <button class="text-button secondary" type="button" id="importConfig">Import</button>
+          <button class="text-button secondary" type="button" id="exportConfig">Export</button>
+          <button class="text-button secondary" type="button" id="restoreDefaults">Defaults</button>
+          <button class="text-button" type="submit" value="default">Save</button>
+        </footer>
+      </form>
+    </dialog>
+  </body>
+</html>
