@@ -1,0 +1,9 @@
+{
+  "manifest_version": 3,
+  "name": "OpenTab",
+  "description": "A simple paper-style new tab launcher for favorite links.",
+  "version": "0.1.0",
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  }
+}

@@ -14,6 +14,18 @@ For New Tab Redirect, use the file URL for your local copy:
 file:///path/to/opentab/index.html
 ```
 
+## Use It As A Chrome Extension
+
+OpenTab can also replace Chrome's new tab page directly.
+
+1. Open `chrome://extensions`.
+2. Turn on Developer Mode.
+3. Click Load unpacked.
+4. Choose this `opentab` folder.
+5. Open a new tab.
+
+The extension asks for no permissions. Settings are stored in that extension's local browser storage, so they are separate from the plain `file://` version.
+
 ## Features
 
 - Full-screen favorite-link grid
@@ -21,6 +33,7 @@ file:///path/to/opentab/index.html
 - Automatic favicon fallback for custom links
 - In-page link editing
 - Config export/import as JSON
+- Chrome new-tab extension wrapper
 - Static hosting friendly
 - Light, flat app-launcher design with no animated background or extra widgets
 
