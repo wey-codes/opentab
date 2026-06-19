@@ -2,24 +2,21 @@
 
 ## Product Shape
 
-OpenTab is a local-first new-tab launchpad. The main job is to make the user's favorite links immediately clickable when a new tab opens. Focus, routine, and money are supporting instruments, not the main burden.
+OpenTab is a local-first new-tab launchpad. The main job is to make favorite links immediately clickable when a new tab opens.
 
 ## V1 Acceptance Criteria
 
-- The first screen prioritizes large favorite-link tiles.
-- The page shows time, date, today's focus, one routine checklist, and an hourly earnings counter.
+- The first screen is only the link launchpad plus tiny controls for add/settings.
+- Default links fill one viewport without scrolling on desktop and mobile.
+- Link tiles are large, evenly sized, and easy to click.
+- Link tiles show a favicon/logo preview with fallback initials.
+- Users can edit, add, remove, export, import, and restore links.
 - The page works as a static website without a build step.
-- Settings are editable in-page and saved locally in the browser.
-- Users can edit links, routine items, email URL, hourly wage, work hours, and display name.
-- Users can export/import config as JSON.
-- Focus and checklist state reset by date; permanent settings persist.
-- The project can be hosted as-is for GitHub Pages or any static host.
-- No account, backend, analytics, or browser permissions are required for v1.
+- No account, backend, analytics, or browser permissions are required.
 
 ## Product Principles
 
-- Links first.
-- Setup optional.
+- Links only.
+- No required setup.
 - Local by default.
 - Useful before it is clever.
-- Extension features stay optional.

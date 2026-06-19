@@ -1,6 +1,6 @@
 # OpenTab
 
-OpenTab is a simple open-source start page for new tabs: big favorite links first, with a light daily focus box, one routine checklist, and a small hourly earnings counter.
+OpenTab is a simple open-source new-tab launchpad: large, even favorite-link tiles that fill one screen.
 
 It is intentionally static. No account, backend, build step, analytics, or sync service is required.
 
@@ -16,11 +16,10 @@ file:///path/to/opentab/index.html
 
 ## Features
 
-- Large launch tiles for favorite links
-- Optional daily focus field
-- One simple routine checklist
-- Hourly wage counter for money earned today
-- Local settings saved in the browser
+- Full-screen favorite-link grid
+- Large equal tiles with favicon/logo previews
+- Automatic favicon fallback for custom links
+- In-page link editing
 - Config export/import as JSON
 - Static hosting friendly
 - Local Three.js background in `vendor/three.min.js`
@@ -37,18 +36,15 @@ For GitHub Pages:
 
 ## Privacy
 
-OpenTab only uses the local time/date and the data typed into the page. It does not read browser history, email, calendar, files, or activity from other apps.
-
-Future Chrome extension support could optionally suggest top sites, but that should stay opt-in because it requires browser permissions.
+OpenTab stores links locally in the browser. Link icons are loaded from each site's favicon or a favicon lookup URL so the tiles look recognizable without bundling trademarked logo assets into the repo.
 
 ## Roadmap Ideas
 
 - Drag to reorder links
-- Keyboard search/filter
+- Keyboard shortcuts
 - Optional Chrome extension wrapper
-- Optional top-sites suggestions
-- Simple theme picker
-- Better icon handling
+- Theme picker
+- Better per-link color controls
 
 ## License
 
