@@ -22,7 +22,11 @@ file:///path/to/opentab/index.html
 - In-page link editing
 - Config export/import as JSON
 - Static hosting friendly
-- Local Three.js background in `vendor/three.min.js`
+- Light, flat app-launcher design with no animated background or extra widgets
+
+## Design Direction
+
+OpenTab should feel closer to a fast app launcher than a dashboard. The V1 design uses equal tiles, clear labels, recognizable icons, and restrained color so the page is useful the second a new tab opens.
 
 ## Publish It
 

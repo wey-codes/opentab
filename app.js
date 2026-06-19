@@ -56,7 +56,7 @@
       label: "Notion",
       url: "https://www.notion.so/",
       icon: "https://www.notion.so/images/favicon.ico",
-      accent: "#f7f2e8"
+      accent: "#1f2937"
     }
   ];
 
@@ -80,7 +80,6 @@
   init();
 
   function init() {
-    initThree();
     wireEvents();
     renderLinks();
     applyGridShape();
@@ -115,7 +114,6 @@
       closeSettings();
     });
     window.addEventListener("resize", applyGridShape);
-    window.addEventListener("resize", resizeRenderer);
   }
 
   function renderLinks() {
@@ -367,7 +365,7 @@
   }
 
   function defaultAccent(value, index) {
-    var palette = ["#56d6c5", "#ff7d66", "#ffc857", "#9bd66b", "#7aa9ff", "#f7f2e8"];
+    var palette = ["#56d6c5", "#ff7d66", "#ffc857", "#9bd66b", "#7aa9ff", "#a78bfa"];
     var total = 0;
     for (var i = 0; i < String(value).length; i += 1) {
       total += String(value).charCodeAt(i);
@@ -389,123 +387,5 @@
 
   function id() {
     return "id-" + Math.random().toString(36).slice(2, 10);
-  }
-
-  var renderer;
-  var camera;
-  var scene;
-  var rig;
-
-  function initThree() {
-    var canvas = document.getElementById("spaceCanvas");
-    if (!window.THREE) {
-      document.documentElement.dataset.sceneEngine = "fallback";
-      drawFallback(canvas);
-      return;
-    }
-
-    document.documentElement.dataset.sceneEngine = "three";
-    renderer = new THREE.WebGLRenderer({
-      canvas: canvas,
-      antialias: true,
-      alpha: true,
-      preserveDrawingBuffer: true
-    });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-    camera.position.set(0, 0.4, 8.2);
-
-    rig = new THREE.Group();
-    scene.add(rig);
-
-    var keyLight = new THREE.DirectionalLight(0xfff0d0, 1.15);
-    keyLight.position.set(4, 5, 7);
-    scene.add(keyLight);
-
-    var coolLight = new THREE.PointLight(0x56d6c5, 1.15, 22);
-    coolLight.position.set(-5, -1, 4);
-    scene.add(coolLight);
-
-    var warmLight = new THREE.PointLight(0xff7d66, 0.8, 20);
-    warmLight.position.set(5, 1, 3);
-    scene.add(warmLight);
-
-    var ringMaterial = new THREE.MeshStandardMaterial({
-      color: 0x56d6c5,
-      roughness: 0.38,
-      metalness: 0.55,
-      wireframe: true
-    });
-    var ring = new THREE.Mesh(new THREE.TorusGeometry(2.4, 0.015, 12, 160), ringMaterial);
-    rig.add(ring);
-
-    var ringTwo = ring.clone();
-    ringTwo.material = new THREE.MeshStandardMaterial({
-      color: 0xffc857,
-      roughness: 0.5,
-      metalness: 0.35,
-      wireframe: true
-    });
-    ringTwo.rotation.x = Math.PI / 2.7;
-    ringTwo.rotation.y = Math.PI / 6;
-    rig.add(ringTwo);
-
-    var barMaterial = new THREE.MeshStandardMaterial({
-      color: 0xf7f2e8,
-      roughness: 0.6,
-      metalness: 0.2
-    });
-    for (var i = 0; i < 18; i += 1) {
-      var bar = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.025, 1.1 + (i % 4) * 0.28), barMaterial);
-      var angle = (i / 18) * Math.PI * 2;
-      bar.position.set(Math.cos(angle) * 3.05, Math.sin(angle) * 1.2, -0.55 + (i % 3) * 0.32);
-      bar.rotation.z = angle;
-      bar.rotation.y = angle * 0.5;
-      rig.add(bar);
-    }
-
-    resizeRenderer();
-    animateThree();
-  }
-
-  function resizeRenderer() {
-    if (!renderer || !camera) return;
-    var width = window.innerWidth;
-    var height = window.innerHeight;
-    renderer.setSize(width, height, false);
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-  }
-
-  function animateThree() {
-    if (!renderer) return;
-    var now = performance.now() * 0.001;
-    rig.rotation.x = Math.sin(now * 0.21) * 0.12;
-    rig.rotation.y = now * 0.09;
-    rig.rotation.z = Math.sin(now * 0.14) * 0.08;
-    renderer.render(scene, camera);
-    window.requestAnimationFrame(animateThree);
-  }
-
-  function drawFallback(canvas) {
-    var ctx = canvas.getContext("2d");
-    function draw() {
-      var width = canvas.width = window.innerWidth * (window.devicePixelRatio || 1);
-      var height = canvas.height = window.innerHeight * (window.devicePixelRatio || 1);
-      ctx.clearRect(0, 0, width, height);
-      ctx.strokeStyle = "rgba(86, 214, 197, 0.45)";
-      ctx.lineWidth = 2;
-      for (var i = 0; i < 8; i += 1) {
-        ctx.beginPath();
-        ctx.ellipse(width / 2, height / 2, 180 + i * 45, 45 + i * 17, i * 0.38, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-      ctx.fillStyle = "rgba(255, 200, 87, 0.8)";
-      ctx.fillRect(width / 2 - 4, height / 2 - 4, 8, 8);
-    }
-    draw();
-    window.addEventListener("resize", draw);
   }
 })();
