@@ -24,12 +24,13 @@ OpenTab can also replace Chrome's new tab page directly.
 4. Choose this `opentab` folder.
 5. Open a new tab.
 
-The extension asks for no permissions. Settings are stored in that extension's local browser storage, so they are separate from the plain `file://` version.
+The extension uses Chrome's `history` permission so the top strip can show real recent browser history. Settings are stored in that extension's local browser storage, so they are separate from the plain `file://` version.
 
 ## Features
 
 - Full-screen favorite-link grid
-- Recent strip for links opened from OpenTab
+- History strip from Chrome history when installed as an extension
+- Recent strip fallback for links opened from OpenTab in the plain file/static version
 - Large equal tiles with favicon/logo previews
 - Automatic favicon fallback for custom links
 - In-page link editing

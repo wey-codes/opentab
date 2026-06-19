@@ -66,6 +66,7 @@
     shell: document.querySelector(".shell"),
     linkGrid: document.getElementById("linkGrid"),
     recentStrip: document.getElementById("recentStrip"),
+    recentLabel: document.getElementById("recentLabel"),
     recentList: document.getElementById("recentList"),
     quickAddLink: document.getElementById("quickAddLink"),
     settingsButton: document.getElementById("settingsButton"),
@@ -177,17 +178,62 @@
   }
 
   function renderRecent() {
+    if (isChromeHistoryAvailable()) {
+      renderChromeHistory();
+      return;
+    }
+
+    renderLocalRecent();
+  }
+
+  function renderLocalRecent() {
+    els.recentLabel.textContent = "Recent";
+    els.recentStrip.setAttribute("aria-label", "Recently opened");
+    els.clearRecent.hidden = false;
+
     var recent = (state.recent || []).map(normalizeLink).filter(function (link) {
       return link.label && link.url;
     }).slice(0, 6);
 
     state.recent = recent;
-    els.recentList.innerHTML = "";
-    els.recentStrip.hidden = recent.length === 0;
-    els.shell.classList.toggle("has-recent", recent.length > 0);
-    if (!recent.length) return;
+    renderRecentLinks(recent);
+  }
 
-    recent.forEach(function (link) {
+  function renderChromeHistory() {
+    els.recentLabel.textContent = "History";
+    els.recentStrip.setAttribute("aria-label", "Chrome history");
+    els.clearRecent.hidden = true;
+
+    queryChromeHistory(function (items) {
+      var seen = {};
+      var historyLinks = items
+        .filter(function (item) {
+          var url = item && safeUrl(item.url);
+          if (!url || !usableHistoryUrl(url) || seen[url]) return false;
+          seen[url] = true;
+          return true;
+        })
+        .map(function (item, index) {
+          return normalizeLink({
+            id: "history-" + index,
+            label: item.title || domainLabel(item.url) || "History",
+            url: item.url,
+            icon: faviconUrl(item.url)
+          }, index);
+        })
+        .slice(0, 6);
+
+      renderRecentLinks(historyLinks);
+    });
+  }
+
+  function renderRecentLinks(links) {
+    els.recentList.innerHTML = "";
+    els.recentStrip.hidden = links.length === 0;
+    els.shell.classList.toggle("has-recent", links.length > 0);
+    if (!links.length) return;
+
+    links.forEach(function (link) {
       var item = document.createElement("a");
       item.className = "recent-chip";
       item.href = safeUrl(link.url);
@@ -218,12 +264,40 @@
   }
 
   function recordRecent(link) {
+    if (isChromeHistoryAvailable()) return;
+
     var entry = normalizeLink(link);
     state.recent = [entry].concat((state.recent || []).filter(function (item) {
       return safeUrl(item.url) !== entry.url;
     })).slice(0, 6);
     saveState();
     renderRecent();
+  }
+
+  function isChromeHistoryAvailable() {
+    return Boolean(window.chrome && chrome.history && typeof chrome.history.search === "function");
+  }
+
+  function queryChromeHistory(callback) {
+    try {
+      chrome.history.search({
+        text: "",
+        startTime: 0,
+        maxResults: 25
+      }, function (items) {
+        if (chrome.runtime && chrome.runtime.lastError) {
+          renderLocalRecent();
+          return;
+        }
+        callback(items || []);
+      });
+    } catch (error) {
+      renderLocalRecent();
+    }
+  }
+
+  function usableHistoryUrl(value) {
+    return /^https?:\/\//i.test(String(value || ""));
   }
 
   function applyGridShape() {

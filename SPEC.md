@@ -8,13 +8,14 @@ OpenTab is a local-first new-tab launchpad. The main job is to make favorite lin
 
 - The first screen is only the link launchpad plus tiny controls for add/settings.
 - Default links fill one viewport without scrolling on desktop and mobile.
-- Recently opened OpenTab links can appear in a thin top strip without requiring browser-history permissions.
+- Installed extension mode can show real Chrome history in a thin top strip using the `history` permission.
+- Plain file/static mode keeps a recent OpenTab-click fallback without browser-history access.
 - Link tiles are large, evenly sized, and easy to click.
 - Link tiles show a favicon/logo preview with fallback initials.
 - Users can edit, add, remove, export, import, and restore links.
 - The page works as a static website without a build step.
 - The folder can be loaded as an unpacked Chrome extension that overrides the new tab page.
-- No account, backend, analytics, or browser permissions are required.
+- No account, backend, or analytics are required. Extension mode uses Chrome's `history` permission only for the history strip.
 - No animated background, required onboarding, focus panel, routine widget, clock, or money counter in V1.
 
 ## Product Principles

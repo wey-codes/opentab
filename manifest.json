@@ -3,6 +3,9 @@
   "name": "OpenTab",
   "description": "A simple paper-style new tab launcher for favorite links.",
   "version": "0.1.0",
+  "permissions": [
+    "history"
+  ],
   "chrome_url_overrides": {
     "newtab": "index.html"
   }
