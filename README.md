@@ -26,7 +26,7 @@ file:///path/to/opentab/index.html
 
 ## Design Direction
 
-OpenTab should feel closer to a fast app launcher than a dashboard. The V1 design uses equal tiles, clear labels, recognizable icons, and restrained color so the page is useful the second a new tab opens.
+OpenTab should feel closer to a fast app launcher than a dashboard. The V1 design uses equal tiles, clear labels, recognizable icons, and a paper-and-ink visual style so the page is useful the second a new tab opens.
 
 ## Publish It
 

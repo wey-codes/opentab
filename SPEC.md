@@ -26,11 +26,11 @@ OpenTab is a local-first new-tab launchpad. The main job is to make favorite lin
 
 - Use a single full-screen grid, not a stacked dashboard.
 - Keep cards coplanar: every link tile sits on the same visual level.
-- Use 8px corner radius, subtle borders, and light shadows only for separation.
+- Use paper-like surfaces, black ink borders, and offset shadows for separation.
 - Put the service icon first, then the link name, then the domain.
-- Use each link accent sparingly as a top strip and soft wash, not as the whole card.
+- Use each link accent only as a soft paper wash behind the icon area, not as the whole card.
 - Keep the default eight links visible on one screen with no scrolling.
-- Avoid decorative gradients, 3D scenes, background art, or text explaining how the page works.
+- Avoid 3D scenes, glossy effects, bright white glare, or text explaining how the page works.
 
 ## Research Notes
 
