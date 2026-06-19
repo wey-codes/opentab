@@ -55,8 +55,16 @@ a {
   padding: 20px 0;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  gap: 14px;
+  gap: 12px;
   overflow: hidden;
+}
+
+.shell.has-recent {
+  grid-template-rows: auto auto minmax(0, 1fr);
+}
+
+[hidden] {
+  display: none !important;
 }
 
 .topbar,
@@ -132,6 +140,91 @@ input:focus-visible {
   min-width: 34px;
   min-height: 34px;
   font-size: 1.05rem;
+}
+
+.recent-strip {
+  min-width: 0;
+  min-height: 44px;
+  border: 2px solid var(--line);
+  border-radius: 12px 9px 13px 10px;
+  background: rgba(251, 250, 244, 0.86);
+  box-shadow: 3px 3px 0 rgba(23, 23, 23, 0.1);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 7px 10px;
+  overflow: hidden;
+}
+
+.recent-label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.recent-list {
+  min-width: 0;
+  display: flex;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.recent-chip {
+  flex: 1 1 92px;
+  min-width: 0;
+  max-width: 220px;
+  min-height: 28px;
+  border: 1px solid var(--line);
+  border-radius: 8px 7px 9px 7px;
+  background: var(--surface);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 8px;
+  overflow: hidden;
+  box-shadow: 2px 2px 0 rgba(23, 23, 23, 0.09);
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.recent-chip:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 rgba(23, 23, 23, 0.13);
+}
+
+.recent-chip img {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+.recent-initials {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  font-size: 0.62rem;
+  font-weight: 900;
+}
+
+.recent-chip img + .recent-initials {
+  display: none;
+}
+
+.recent-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.84rem;
+  font-weight: 800;
 }
 
 .launch-grid {
@@ -347,7 +440,7 @@ input {
   .shell {
     width: min(100% - 18px, 760px);
     padding: 11px 0;
-    gap: 8px;
+    gap: 7px;
   }
 
   .topbar {
@@ -361,6 +454,33 @@ input {
   .eyebrow {
     margin-bottom: 4px;
     font-size: 0.68rem;
+  }
+
+  .recent-strip {
+    min-height: 38px;
+    gap: 8px;
+    padding: 6px 8px;
+  }
+
+  .recent-list {
+    gap: 6px;
+  }
+
+  .recent-chip {
+    flex-basis: 78px;
+    max-width: 118px;
+  }
+
+  .recent-list .recent-chip:nth-child(n + 5) {
+    display: none;
+  }
+
+  .recent-label {
+    font-size: 0.65rem;
+  }
+
+  .recent-name {
+    font-size: 0.72rem;
   }
 
   .launch-grid {

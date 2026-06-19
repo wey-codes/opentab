@@ -29,6 +29,7 @@ The extension asks for no permissions. Settings are stored in that extension's l
 ## Features
 
 - Full-screen favorite-link grid
+- Recent strip for links opened from OpenTab
 - Large equal tiles with favicon/logo previews
 - Automatic favicon fallback for custom links
 - In-page link editing

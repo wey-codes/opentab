@@ -22,6 +22,11 @@
         </nav>
       </header>
 
+      <section id="recentStrip" class="recent-strip" aria-label="Recently opened" hidden>
+        <p class="recent-label">Recent</p>
+        <div id="recentList" class="recent-list"></div>
+      </section>
+
       <section id="linkGrid" class="launch-grid" aria-label="Favorite links"></section>
     </main>
 
@@ -47,6 +52,7 @@
           <input id="importFile" class="sr-only" type="file" accept="application/json">
           <button class="text-button secondary" type="button" id="importConfig">Import</button>
           <button class="text-button secondary" type="button" id="exportConfig">Export</button>
+          <button class="text-button secondary" type="button" id="clearRecent">Clear Recent</button>
           <button class="text-button secondary" type="button" id="restoreDefaults">Defaults</button>
           <button class="text-button" type="submit" value="default">Save</button>
         </footer>

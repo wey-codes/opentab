@@ -8,6 +8,7 @@ OpenTab is a local-first new-tab launchpad. The main job is to make favorite lin
 
 - The first screen is only the link launchpad plus tiny controls for add/settings.
 - Default links fill one viewport without scrolling on desktop and mobile.
+- Recently opened OpenTab links can appear in a thin top strip without requiring browser-history permissions.
 - Link tiles are large, evenly sized, and easy to click.
 - Link tiles show a favicon/logo preview with fallback initials.
 - Users can edit, add, remove, export, import, and restore links.

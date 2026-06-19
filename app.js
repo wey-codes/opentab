@@ -63,7 +63,10 @@
   var state = loadState();
 
   var els = {
+    shell: document.querySelector(".shell"),
     linkGrid: document.getElementById("linkGrid"),
+    recentStrip: document.getElementById("recentStrip"),
+    recentList: document.getElementById("recentList"),
     quickAddLink: document.getElementById("quickAddLink"),
     settingsButton: document.getElementById("settingsButton"),
     dialog: document.getElementById("settingsDialog"),
@@ -72,6 +75,7 @@
     linkEditor: document.getElementById("linkEditor"),
     addLinkRow: document.getElementById("addLinkRow"),
     restoreDefaults: document.getElementById("restoreDefaults"),
+    clearRecent: document.getElementById("clearRecent"),
     importConfig: document.getElementById("importConfig"),
     exportConfig: document.getElementById("exportConfig"),
     importFile: document.getElementById("importFile")
@@ -82,6 +86,7 @@
   function init() {
     wireEvents();
     renderLinks();
+    renderRecent();
     applyGridShape();
   }
 
@@ -102,6 +107,12 @@
       saveState();
       fillSettings();
       renderLinks();
+      renderRecent();
+    });
+    els.clearRecent.addEventListener("click", function () {
+      state.recent = [];
+      saveState();
+      renderRecent();
     });
     els.exportConfig.addEventListener("click", exportConfig);
     els.importConfig.addEventListener("click", function () {
@@ -130,6 +141,9 @@
       tile.rel = "noopener noreferrer";
       tile.style.setProperty("--accent", link.accent);
       tile.style.setProperty("--shade", hexToRgba(link.accent, 0.24));
+      tile.addEventListener("click", function () {
+        recordRecent(link);
+      });
 
       var mark = document.createElement("span");
       mark.className = "link-mark";
@@ -160,6 +174,56 @@
       tile.append(mark, copy);
       els.linkGrid.appendChild(tile);
     });
+  }
+
+  function renderRecent() {
+    var recent = (state.recent || []).map(normalizeLink).filter(function (link) {
+      return link.label && link.url;
+    }).slice(0, 6);
+
+    state.recent = recent;
+    els.recentList.innerHTML = "";
+    els.recentStrip.hidden = recent.length === 0;
+    els.shell.classList.toggle("has-recent", recent.length > 0);
+    if (!recent.length) return;
+
+    recent.forEach(function (link) {
+      var item = document.createElement("a");
+      item.className = "recent-chip";
+      item.href = safeUrl(link.url);
+      item.rel = "noopener noreferrer";
+      item.title = link.label + " - " + domainLabel(link.url);
+      item.addEventListener("click", function () {
+        recordRecent(link);
+      });
+
+      var image = document.createElement("img");
+      image.alt = "";
+      image.src = link.icon || faviconUrl(link.url);
+      image.addEventListener("error", function () {
+        image.remove();
+      });
+
+      var fallback = document.createElement("span");
+      fallback.className = "recent-initials";
+      fallback.textContent = initials(link.label);
+
+      var label = document.createElement("span");
+      label.className = "recent-name";
+      label.textContent = link.label;
+
+      item.append(image, fallback, label);
+      els.recentList.appendChild(item);
+    });
+  }
+
+  function recordRecent(link) {
+    var entry = normalizeLink(link);
+    state.recent = [entry].concat((state.recent || []).filter(function (item) {
+      return safeUrl(item.url) !== entry.url;
+    })).slice(0, 6);
+    saveState();
+    renderRecent();
   }
 
   function applyGridShape() {
@@ -260,10 +324,11 @@
 
     saveState();
     renderLinks();
+    renderRecent();
   }
 
   function exportConfig() {
-    var blob = new Blob([JSON.stringify({ links: state.links }, null, 2)], { type: "application/json" });
+    var blob = new Blob([JSON.stringify({ links: state.links, recent: state.recent || [] }, null, 2)], { type: "application/json" });
     var url = URL.createObjectURL(blob);
     var link = document.createElement("a");
     link.href = url;
@@ -283,9 +348,11 @@
       try {
         var imported = JSON.parse(String(reader.result || "{}"));
         state.links = Array.isArray(imported.links) ? imported.links.map(normalizeLink) : clone(DEFAULT_LINKS);
+        state.recent = Array.isArray(imported.recent) ? imported.recent.map(normalizeLink).slice(0, 6) : [];
         saveState();
         fillSettings();
         renderLinks();
+        renderRecent();
       } catch (error) {
         window.alert("OpenTab could not read that links file.");
       } finally {
@@ -298,13 +365,14 @@
   function loadState() {
     try {
       var stored = window.localStorage.getItem(STORAGE_KEY);
-      if (!stored) return { links: clone(DEFAULT_LINKS) };
+      if (!stored) return { links: clone(DEFAULT_LINKS), recent: [] };
       var parsed = JSON.parse(stored);
       return {
-        links: Array.isArray(parsed.links) ? parsed.links.map(normalizeLink) : clone(DEFAULT_LINKS)
+        links: Array.isArray(parsed.links) ? parsed.links.map(normalizeLink) : clone(DEFAULT_LINKS),
+        recent: Array.isArray(parsed.recent) ? parsed.recent.map(normalizeLink).slice(0, 6) : []
       };
     } catch (error) {
-      return { links: clone(DEFAULT_LINKS) };
+      return { links: clone(DEFAULT_LINKS), recent: [] };
     }
   }
 
