@@ -16,6 +16,8 @@ OpenTab is a local-first new-tab launchpad. The main job is to make pinned links
 - Link tiles show a favicon/logo preview with fallback initials.
 - Users can edit, add, remove, export, import, and restore links.
 - The page works as a static website without a build step.
+- The hosted website can be installed to mobile home screens as a web app.
+- The mobile web app caches the app shell for offline launch.
 - The folder can be loaded as an unpacked Chrome extension that overrides the new tab page.
 - No account, backend, or analytics are required. Extension mode uses Chrome's `history` permission only for the history strip and smart slots.
 - No animated background, required onboarding, focus panel, routine widget, clock, or money counter in V1.

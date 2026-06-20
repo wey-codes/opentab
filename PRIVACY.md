@@ -8,6 +8,8 @@ OpenTab stores your pinned links, recent OpenTab clicks, and imported settings i
 
 That data stays on your device unless you export it yourself.
 
+When installed as a mobile web app, OpenTab may also cache its own app files in your browser so it can launch faster and work offline.
+
 ## Chrome History Permission
 
 When OpenTab is installed as a Chrome extension, it asks for the `history` permission.

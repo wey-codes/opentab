@@ -131,6 +131,7 @@
 
   function init() {
     wireEvents();
+    registerServiceWorker();
     refreshOpenTab();
   }
 
@@ -387,6 +388,15 @@
 
   function setHistoryMode(mode) {
     document.documentElement.dataset.historyMode = mode;
+  }
+
+  function registerServiceWorker() {
+    var webProtocol = location.protocol === "http:" || location.protocol === "https:";
+    if (!webProtocol || !("serviceWorker" in navigator)) return;
+
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("./sw.js").catch(function () {});
+    });
   }
 
   function usableHistoryUrl(value) {

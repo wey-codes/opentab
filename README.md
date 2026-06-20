@@ -13,7 +13,7 @@ It is a static, local-first Chrome new tab launcher. There is no account, backen
 - Adds up to two smart slots from frequent Chrome history when installed as a Chrome extension.
 - Shows a thin recent-history strip in extension mode.
 - Refreshes Chrome history whenever the new tab page loads or becomes active.
-- Works as plain static files or as an unpacked Chrome extension.
+- Works as plain static files, an installable mobile web app, or an unpacked Chrome extension.
 - Stores settings locally in the current browser.
 
 Default pinned links:
@@ -51,6 +51,24 @@ file:///path/to/opentab/index.html
 
 The plain file/static version cannot read Chrome history, so it does not guess your most-used sites. A hosted URL opened through a new-tab redirect extension has the same browser limit. To use the history strip and smart slots, install OpenTab itself as the Chrome extension.
 
+## Install On Mobile
+
+Host OpenTab on any static host with HTTPS, then open that URL on your phone.
+
+On iPhone:
+
+1. Open the hosted OpenTab URL in Safari.
+2. Tap Share.
+3. Tap Add to Home Screen.
+
+On Android:
+
+1. Open the hosted OpenTab URL in Chrome.
+2. Tap the menu.
+3. Tap Add to Home screen or Install app.
+
+The mobile web app is a fast home-screen launcher for pinned links. Mobile Chrome does not allow this page to read browser history, so the smart history slots remain desktop-extension-only.
+
 ## Customize
 
 Use the settings button in the top right to edit pinned links, add links, restore defaults, import, or export your config.
@@ -74,7 +92,7 @@ See [PRIVACY.md](./PRIVACY.md) for the full plain-English privacy note.
 
 This folder can be deployed as-is to GitHub Pages, Netlify, Vercel, Cloudflare Pages, or any static host.
 
-If you host it as a website, people can use the URL with a new tab redirect extension. If you want Chrome to replace the new tab page directly, use the unpacked extension install flow above.
+If you host it as a website, people can install it to a phone home screen or use the URL with a new tab redirect extension. If you want Chrome to replace the desktop new tab page directly and read Chrome history, use the unpacked extension install flow above.
 
 ## Development
 
@@ -95,6 +113,7 @@ Useful checks:
 ```bash
 node --check app.js
 python3 -m json.tool manifest.json >/dev/null
+python3 -m json.tool site.webmanifest >/dev/null
 ```
 
 ## Project Direction
