@@ -1,4 +1,4 @@
-var CACHE_NAME = "opentab-app-v2";
+var CACHE_NAME = "opentab-app-v3";
 var APP_SHELL = [
   "./",
   "./index.html",

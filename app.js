@@ -79,6 +79,23 @@
     }
   ];
 
+  var LOCAL_STARTER_LINKS = [
+    {
+      id: id(),
+      label: "Drive",
+      url: "https://drive.google.com/",
+      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fdrive.google.com%2F",
+      accent: "#34a853"
+    },
+    {
+      id: id(),
+      label: "Docs",
+      url: "https://docs.google.com/",
+      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fdocs.google.com%2F",
+      accent: "#4285f4"
+    }
+  ];
+
   var LEGACY_AUTO_URLS = [
     "https://drive.google.com/",
     "https://www.perplexity.ai/",
@@ -270,16 +287,32 @@
   }
 
   function renderLocalRecent() {
-    els.recentLabel.textContent = "Recent";
-    els.recentStrip.setAttribute("aria-label", "Recently opened");
-    els.clearRecent.hidden = false;
-
     var recent = (state.recent || []).map(normalizeLink).filter(function (link) {
       return link.label && link.url;
     }).slice(0, 6);
 
     state.recent = recent;
-    renderRecentLinks(recent);
+
+    if (recent.length) {
+      els.recentLabel.textContent = "Recent";
+      els.recentStrip.setAttribute("aria-label", "Recently opened");
+      els.clearRecent.hidden = false;
+      renderRecentLinks(recent);
+      return;
+    }
+
+    els.recentLabel.textContent = "Start";
+    els.recentStrip.setAttribute("aria-label", "Starter links");
+    els.clearRecent.hidden = true;
+    renderRecentLinks(localStarterLinks(6));
+  }
+
+  function localStarterLinks(limit) {
+    return uniqueSmartLinks(LOCAL_STARTER_LINKS, state.links, limit);
+  }
+
+  function buildLocalSmartLinks() {
+    return uniqueSmartLinks((state.recent || []).concat(LOCAL_STARTER_LINKS), state.links, SMART_SLOT_COUNT);
   }
 
   function renderChromeHistoryLinks(items) {
@@ -408,10 +441,6 @@
     } catch (error) {
       return false;
     }
-  }
-
-  function buildLocalSmartLinks() {
-    return uniqueSmartLinks(state.recent || [], state.links, SMART_SLOT_COUNT);
   }
 
   function buildFrequentSmartLinks(items) {

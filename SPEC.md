@@ -12,6 +12,7 @@ OpenTab is a local-first new-tab launchpad. The main job is to make pinned links
 - Installed extension mode can show real Chrome history in a thin top strip using the `history` permission.
 - Extension mode refreshes Chrome history on load, focus, page-show, and visible-tab return.
 - Plain file/static mode does not guess most-used sites without browser-history access.
+- Mobile/static mode keeps the top strip and two starter/recent slots visible without claiming browser-history access.
 - Link tiles are large, evenly sized, and easy to click.
 - Link tiles show a favicon/logo preview with fallback initials.
 - Users can edit, add, remove, export, import, and restore links.

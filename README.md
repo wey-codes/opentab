@@ -16,6 +16,7 @@ OpenTab is live at [wey-codes.github.io/opentab](https://wey-codes.github.io/ope
 - Keeps ten pinned links editable by the user.
 - Adds up to two smart slots from frequent Chrome history when installed as a Chrome extension.
 - Shows a thin recent-history strip in extension mode.
+- Keeps two starter/recent slots visible in mobile and static web mode.
 - Refreshes Chrome history whenever the new tab page loads or becomes active.
 - Works as plain static files, an installable mobile web app, or an unpacked Chrome extension.
 - Stores settings locally in the current browser.
@@ -53,7 +54,7 @@ Open `index.html` directly in a browser, or serve the folder with any static fil
 file:///path/to/opentab/index.html
 ```
 
-The plain file/static version cannot read Chrome history, so it does not guess your most-used sites. A hosted URL opened through a new-tab redirect extension has the same browser limit. To use the history strip and smart slots, install OpenTab itself as the Chrome extension.
+The plain file/static version cannot read Chrome history, so it does not know your actual most-used sites. It keeps the top strip and two extra tiles visible with local OpenTab clicks plus starter links. A hosted URL opened through a new-tab redirect extension has the same browser limit. To use real browser history in the strip and smart slots, install OpenTab itself as the Chrome extension.
 
 ## Install On Mobile
 
@@ -71,7 +72,7 @@ On Android:
 2. Tap the menu.
 3. Tap Add to Home screen or Install app.
 
-The mobile web app is a fast home-screen launcher for pinned links. Mobile Chrome does not allow this page to read browser history, so the smart history slots remain desktop-extension-only.
+The mobile web app is a fast home-screen launcher for pinned links. Mobile Chrome does not allow this page to read browser history, so OpenTab uses local OpenTab clicks plus starter links for the top strip and the two extra tiles. Real browser-history smart slots remain desktop-extension-only.
 
 ## Customize
 
