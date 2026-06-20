@@ -8,7 +8,7 @@ OpenTab is a local-first new-tab launchpad. The main job is to make pinned links
 
 - The first screen is only the link launchpad plus tiny controls for add/settings.
 - Default links fill one viewport without scrolling on desktop and mobile.
-- The default big grid is six pinned links plus two smart frequent-history slots.
+- The default big grid is eight pinned links plus four smart frequent-history slots.
 - Installed extension mode can show real Chrome history in a thin top strip using the `history` permission.
 - Plain file/static mode keeps a recent OpenTab-click fallback without browser-history access.
 - Link tiles are large, evenly sized, and easy to click.
@@ -33,7 +33,7 @@ OpenTab is a local-first new-tab launchpad. The main job is to make pinned links
 - Use paper-like surfaces, black ink borders, and offset shadows for separation.
 - Put the service icon first, then the link name, then the domain.
 - Use each link accent only as a soft paper wash behind the icon area, not as the whole card.
-- Keep the default eight links visible on one screen with no scrolling.
+- Keep the default twelve links visible on one screen with no scrolling.
 - Avoid 3D scenes, glossy effects, bright white glare, or text explaining how the page works.
 
 ## Research Notes

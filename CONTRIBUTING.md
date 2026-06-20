@@ -27,7 +27,7 @@ node --check app.js
 python3 -m json.tool manifest.json >/dev/null
 ```
 
-Also test the layout at desktop and mobile widths. The default eight tiles should fit on one screen without scrolling.
+Also test the layout at desktop and mobile widths. The default twelve tiles should fit on one screen without scrolling.
 
 ## Design Rules
 

@@ -1,7 +1,7 @@
 (function () {
   var STORAGE_KEY = "opentab-state-v1";
-  var STATE_VERSION = 3;
-  var SMART_SLOT_COUNT = 2;
+  var STATE_VERSION = 4;
+  var SMART_SLOT_COUNT = 4;
   var HISTORY_FREQUENCY_SCAN_LIMIT = 1000;
 
   var DEFAULT_LINKS = [
@@ -46,6 +46,20 @@
       url: "https://drive.google.com/",
       icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fdrive.google.com%2F",
       accent: "#34a853"
+    },
+    {
+      id: id(),
+      label: "Search",
+      url: "https://www.google.com/",
+      icon: "https://www.google.com/favicon.ico",
+      accent: "#fbbc04"
+    },
+    {
+      id: id(),
+      label: "Maps",
+      url: "https://maps.google.com/",
+      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fmaps.google.com%2F",
+      accent: "#0f9d58"
     }
   ];
 
@@ -63,6 +77,20 @@
       url: "https://github.com/",
       icon: "https://github.com/favicon.ico",
       accent: "#6b7280"
+    },
+    {
+      id: id(),
+      label: "Reddit",
+      url: "https://www.reddit.com/",
+      icon: "https://www.redditstatic.com/desktop2x/img/favicon/favicon-96x96.png",
+      accent: "#ff4500"
+    },
+    {
+      id: id(),
+      label: "Wikipedia",
+      url: "https://www.wikipedia.org/",
+      icon: "https://www.wikipedia.org/static/favicon/wikipedia.ico",
+      accent: "#71717a"
     }
   ];
 
@@ -78,7 +106,9 @@
     "https://www.youtube.com/": "YouTube",
     "https://mail.google.com/": "Gmail",
     "https://calendar.google.com/": "Calendar",
-    "https://drive.google.com/": "Drive"
+    "https://drive.google.com/": "Drive",
+    "https://www.google.com/": "Search",
+    "https://maps.google.com/": "Maps"
   };
 
   var state = loadState();
@@ -453,7 +483,7 @@
     var columns;
 
     if (mobile) {
-      columns = count === 1 ? 1 : 2;
+      columns = count === 1 ? 1 : count > 8 ? 3 : 2;
     } else if (count <= 4) {
       columns = count;
     } else if (count <= 6) {
