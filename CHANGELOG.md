@@ -3,8 +3,8 @@
 ## 0.1.0
 
 - Added paper-style full-screen link grid.
-- Added eight pinned default links.
-- Added four smart slots from frequent Chrome history in extension mode.
+- Added ten pinned default links.
+- Added two smart slots from frequent Chrome history in extension mode.
 - Added recent-history strip for the Chrome extension.
 - Added local recent-click fallback for static/file mode.
 - Added in-page link editing.

@@ -9,8 +9,8 @@ It is a static, local-first Chrome new tab launcher. There is no account, backen
 ## What It Does
 
 - Shows twelve link tiles on one screen.
-- Keeps eight pinned links editable by the user.
-- Adds four smart slots from frequent Chrome history when installed as a Chrome extension.
+- Keeps ten pinned links editable by the user.
+- Adds two smart slots from frequent Chrome history when installed as a Chrome extension.
 - Shows a thin recent-history strip in extension mode.
 - Works as plain static files or as an unpacked Chrome extension.
 - Stores settings locally in the current browser.
@@ -25,13 +25,13 @@ Default pinned links:
 6. X
 7. Box
 8. Facebook Ads
+9. GitHub
+10. Reddit
 
 Static fallback smart links:
 
-1. GitHub
-2. Reddit
-3. Drive
-4. Wikipedia
+1. Drive
+2. Wikipedia
 
 ## Install In Chrome
 
@@ -43,7 +43,7 @@ Static fallback smart links:
 6. Choose the `opentab` folder.
 7. Open a new tab.
 
-Chrome may show that OpenTab can read browsing history. OpenTab uses that permission only inside your browser to fill the recent strip and the four smart slots. Nothing is sent to a server because there is no server.
+Chrome may show that OpenTab can read browsing history. OpenTab uses that permission only inside your browser to fill the recent strip and the two smart slots. Nothing is sent to a server because there is no server.
 
 ## Use Without Installing An Extension
 

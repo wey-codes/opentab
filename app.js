@@ -1,7 +1,7 @@
 (function () {
   var STORAGE_KEY = "opentab-state-v1";
-  var STATE_VERSION = 5;
-  var SMART_SLOT_COUNT = 4;
+  var STATE_VERSION = 6;
+  var SMART_SLOT_COUNT = 2;
   var HISTORY_FREQUENCY_SCAN_LIMIT = 1000;
 
   var DEFAULT_LINKS = [
@@ -60,10 +60,7 @@
       url: "https://adsmanager.facebook.com/",
       icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fadsmanager.facebook.com%2F",
       accent: "#1877f2"
-    }
-  ];
-
-  var SMART_FALLBACK_LINKS = [
+    },
     {
       id: id(),
       label: "GitHub",
@@ -77,7 +74,10 @@
       url: "https://www.reddit.com/",
       icon: "https://www.redditstatic.com/desktop2x/img/favicon/favicon-96x96.png",
       accent: "#ff4500"
-    },
+    }
+  ];
+
+  var SMART_FALLBACK_LINKS = [
     {
       id: id(),
       label: "Drive",
@@ -113,7 +113,9 @@
     "https://maps.google.com/": "Maps",
     "https://x.com/": "X",
     "https://app.box.com/": "Box",
-    "https://adsmanager.facebook.com/": "Facebook Ads"
+    "https://adsmanager.facebook.com/": "Facebook Ads",
+    "https://github.com/": "GitHub",
+    "https://www.reddit.com/": "Reddit"
   };
 
   var state = loadState();
