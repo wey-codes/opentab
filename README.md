@@ -1,6 +1,6 @@
 # OpenTab
 
-OpenTab is a simple open-source new-tab launchpad: large, even favorite-link tiles that fill one screen.
+OpenTab is a simple open-source new-tab launchpad: pinned favorite-link tiles plus a couple smart tiles that fill one screen.
 
 It is intentionally static. No account, backend, build step, analytics, or sync service is required.
 
@@ -28,7 +28,8 @@ The extension uses Chrome's `history` permission so the top strip can show real 
 
 ## Features
 
-- Full-screen favorite-link grid
+- Five pinned favorite-link tiles by default: YouTube, Claude, OpenAI, Email, and Calendar
+- Two smart tiles from frequently used Chrome history when installed as an extension
 - History strip from Chrome history when installed as an extension
 - Recent strip fallback for links opened from OpenTab in the plain file/static version
 - Large equal tiles with favicon/logo previews
@@ -61,7 +62,6 @@ OpenTab stores links locally in the browser. Link icons are loaded from each sit
 
 - Drag to reorder links
 - Keyboard shortcuts
-- Optional Chrome extension wrapper
 - Theme picker
 - Better per-link color controls
 

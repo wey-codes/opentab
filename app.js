@@ -1,13 +1,16 @@
 (function () {
   var STORAGE_KEY = "opentab-state-v1";
+  var STATE_VERSION = 2;
+  var SMART_SLOT_COUNT = 2;
+  var HISTORY_FREQUENCY_SCAN_LIMIT = 1000;
 
   var DEFAULT_LINKS = [
     {
       id: id(),
-      label: "OpenAI",
-      url: "https://chatgpt.com/",
-      icon: "https://openai.com/favicon.ico",
-      accent: "#10a37f"
+      label: "YouTube",
+      url: "https://www.youtube.com/",
+      icon: "https://www.youtube.com/favicon.ico",
+      accent: "#ff0033"
     },
     {
       id: id(),
@@ -18,14 +21,14 @@
     },
     {
       id: id(),
-      label: "YouTube",
-      url: "https://www.youtube.com/",
-      icon: "https://www.youtube.com/favicon.ico",
-      accent: "#ff0033"
+      label: "OpenAI",
+      url: "https://chatgpt.com/",
+      icon: "https://openai.com/favicon.ico",
+      accent: "#10a37f"
     },
     {
       id: id(),
-      label: "Gmail",
+      label: "Email",
       url: "https://mail.google.com/",
       icon: "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico",
       accent: "#ea4335"
@@ -36,7 +39,10 @@
       url: "https://calendar.google.com/",
       icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fcalendar.google.com%2F",
       accent: "#4285f4"
-    },
+    }
+  ];
+
+  var SMART_FALLBACK_LINKS = [
     {
       id: id(),
       label: "Drive",
@@ -50,17 +56,25 @@
       url: "https://www.perplexity.ai/",
       icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fwww.perplexity.ai%2F",
       accent: "#20b8b8"
-    },
-    {
-      id: id(),
-      label: "Notion",
-      url: "https://www.notion.so/",
-      icon: "https://www.notion.so/images/favicon.ico",
-      accent: "#1f2937"
     }
   ];
 
+  var LEGACY_AUTO_URLS = [
+    "https://drive.google.com/",
+    "https://www.perplexity.ai/",
+    "https://www.notion.so/"
+  ];
+
+  var LEGACY_DEFAULT_LABELS = {
+    "https://chatgpt.com/": "OpenAI",
+    "https://claude.ai/": "Claude",
+    "https://www.youtube.com/": "YouTube",
+    "https://mail.google.com/": "Gmail",
+    "https://calendar.google.com/": "Calendar"
+  };
+
   var state = loadState();
+  var smartLinks = [];
 
   var els = {
     shell: document.querySelector(".shell"),
@@ -86,9 +100,8 @@
 
   function init() {
     wireEvents();
-    renderLinks();
+    refreshMainLinks();
     renderRecent();
-    applyGridShape();
   }
 
   function wireEvents() {
@@ -107,7 +120,7 @@
       state.links = clone(DEFAULT_LINKS);
       saveState();
       fillSettings();
-      renderLinks();
+      refreshMainLinks();
       renderRecent();
     });
     els.clearRecent.addEventListener("click", function () {
@@ -128,14 +141,27 @@
     window.addEventListener("resize", applyGridShape);
   }
 
+  function refreshMainLinks() {
+    state.links = normalizeLinks(state.links);
+    smartLinks = buildFallbackSmartLinks();
+    renderLinks();
+
+    if (!isChromeHistoryAvailable()) return;
+
+    queryChromeHistory(HISTORY_FREQUENCY_SCAN_LIMIT, function (items) {
+      smartLinks = buildFrequentSmartLinks(items);
+      renderLinks();
+    }, function () {
+      smartLinks = buildFallbackSmartLinks();
+      renderLinks();
+    });
+  }
+
   function renderLinks() {
     els.linkGrid.innerHTML = "";
-    state.links = state.links.map(normalizeLink).filter(function (link) {
-      return link.label && link.url;
-    });
-    applyGridShape();
+    var displayLinks = state.links.concat(smartLinks);
 
-    state.links.forEach(function (link) {
+    displayLinks.forEach(function (link) {
       var tile = document.createElement("a");
       tile.className = "link-tile";
       tile.href = safeUrl(link.url);
@@ -175,6 +201,8 @@
       tile.append(mark, copy);
       els.linkGrid.appendChild(tile);
     });
+
+    applyGridShape();
   }
 
   function renderRecent() {
@@ -204,12 +232,13 @@
     els.recentStrip.setAttribute("aria-label", "Chrome history");
     els.clearRecent.hidden = true;
 
-    queryChromeHistory(function (items) {
+    queryChromeHistory(25, function (items) {
       var seen = {};
       var historyLinks = items
         .filter(function (item) {
-          var url = item && safeUrl(item.url);
-          if (!url || !usableHistoryUrl(url) || seen[url]) return false;
+          if (!item || !usableHistoryUrl(item.url)) return false;
+          var url = safeUrl(item.url);
+          if (seen[url]) return false;
           seen[url] = true;
           return true;
         })
@@ -224,7 +253,33 @@
         .slice(0, 6);
 
       renderRecentLinks(historyLinks);
-    });
+    }, renderLocalRecent);
+  }
+
+  function historyQueryFailed(fallback) {
+    if (typeof fallback === "function") {
+      fallback();
+      return;
+    }
+    renderLocalRecent();
+  }
+
+  function queryChromeHistory(maxResults, callback, fallback) {
+    try {
+      chrome.history.search({
+        text: "",
+        startTime: 0,
+        maxResults: maxResults
+      }, function (items) {
+        if (chrome.runtime && chrome.runtime.lastError) {
+          historyQueryFailed(fallback);
+          return;
+        }
+        callback(items || []);
+      });
+    } catch (error) {
+      historyQueryFailed(fallback);
+    }
   }
 
   function renderRecentLinks(links) {
@@ -278,30 +333,114 @@
     return Boolean(window.chrome && chrome.history && typeof chrome.history.search === "function");
   }
 
-  function queryChromeHistory(callback) {
+  function usableHistoryUrl(value) {
+    var raw = String(value || "").trim();
+    if (!/^https?:\/\//i.test(raw)) return false;
     try {
-      chrome.history.search({
-        text: "",
-        startTime: 0,
-        maxResults: 25
-      }, function (items) {
-        if (chrome.runtime && chrome.runtime.lastError) {
-          renderLocalRecent();
-          return;
-        }
-        callback(items || []);
-      });
+      var url = new URL(raw);
+      return ["localhost", "127.0.0.1", "::1"].indexOf(url.hostname) === -1;
     } catch (error) {
-      renderLocalRecent();
+      return false;
     }
   }
 
-  function usableHistoryUrl(value) {
-    return /^https?:\/\//i.test(String(value || ""));
+  function buildFallbackSmartLinks() {
+    return uniqueSmartLinks((state.recent || []).concat(SMART_FALLBACK_LINKS), state.links, SMART_SLOT_COUNT);
+  }
+
+  function buildFrequentSmartLinks(items) {
+    var excludedHosts = hostSet(state.links);
+    var byHost = {};
+
+    items.forEach(function (item) {
+      if (!item || !usableHistoryUrl(item.url)) return;
+
+      var host = domainLabel(item.url);
+      if (!host || excludedHosts[host]) return;
+
+      var existing = byHost[host];
+      var visitCount = Number(item.visitCount || 0);
+      var lastVisitTime = Number(item.lastVisitTime || 0);
+
+      if (!existing) {
+        byHost[host] = {
+          host: host,
+          url: item.url,
+          label: smartLabel(item),
+          visits: visitCount,
+          lastVisitTime: lastVisitTime
+        };
+        return;
+      }
+
+      existing.visits += visitCount;
+      if (lastVisitTime > existing.lastVisitTime) {
+        existing.url = item.url;
+        existing.label = smartLabel(item);
+        existing.lastVisitTime = lastVisitTime;
+      }
+    });
+
+    var historyLinks = Object.keys(byHost)
+      .map(function (host) {
+        return byHost[host];
+      })
+      .sort(function (a, b) {
+        if (b.visits !== a.visits) return b.visits - a.visits;
+        return b.lastVisitTime - a.lastVisitTime;
+      })
+      .map(function (entry, index) {
+        return normalizeLink({
+          id: "smart-" + index,
+          label: entry.label,
+          url: entry.url,
+          icon: faviconUrl(entry.url)
+        }, index);
+      });
+
+    return uniqueSmartLinks(historyLinks.concat(SMART_FALLBACK_LINKS), state.links, SMART_SLOT_COUNT);
+  }
+
+  function uniqueSmartLinks(candidates, excludeLinks, limit) {
+    var excludedHosts = hostSet(excludeLinks);
+    var seenHosts = {};
+    var results = [];
+
+    candidates.forEach(function (candidate, index) {
+      if (results.length >= limit) return;
+
+      var link = normalizeLink(candidate, index);
+      var host = domainLabel(link.url);
+      if (!host || excludedHosts[host] || seenHosts[host]) return;
+
+      seenHosts[host] = true;
+      results.push(link);
+    });
+
+    return results;
+  }
+
+  function hostSet(links) {
+    var set = {};
+    (links || []).forEach(function (link) {
+      var host = domainLabel(link.url);
+      if (host) set[host] = true;
+    });
+    return set;
+  }
+
+  function smartLabel(item) {
+    var title = String(item.title || "").trim();
+    if (title && title.length <= 34) return title;
+
+    var host = domainLabel(item.url);
+    var parts = host.split(".");
+    var label = parts.length > 2 ? parts[0] : parts[0] || host;
+    return label.charAt(0).toUpperCase() + label.slice(1);
   }
 
   function applyGridShape() {
-    var count = Math.max(1, state.links.length);
+    var count = Math.max(1, els.linkGrid.children.length || state.links.length + smartLinks.length);
     var mobile = window.innerWidth <= 850;
     var columns;
 
@@ -397,12 +536,12 @@
       });
 
     saveState();
-    renderLinks();
+    refreshMainLinks();
     renderRecent();
   }
 
   function exportConfig() {
-    var blob = new Blob([JSON.stringify({ links: state.links, recent: state.recent || [] }, null, 2)], { type: "application/json" });
+    var blob = new Blob([JSON.stringify({ version: STATE_VERSION, links: state.links, recent: state.recent || [] }, null, 2)], { type: "application/json" });
     var url = URL.createObjectURL(blob);
     var link = document.createElement("a");
     link.href = url;
@@ -421,11 +560,11 @@
     reader.addEventListener("load", function () {
       try {
         var imported = JSON.parse(String(reader.result || "{}"));
-        state.links = Array.isArray(imported.links) ? imported.links.map(normalizeLink) : clone(DEFAULT_LINKS);
+        state.links = migrateStoredLinks(imported.links, imported.version || 1);
         state.recent = Array.isArray(imported.recent) ? imported.recent.map(normalizeLink).slice(0, 6) : [];
         saveState();
         fillSettings();
-        renderLinks();
+        refreshMainLinks();
         renderRecent();
       } catch (error) {
         window.alert("OpenTab could not read that links file.");
@@ -439,19 +578,64 @@
   function loadState() {
     try {
       var stored = window.localStorage.getItem(STORAGE_KEY);
-      if (!stored) return { links: clone(DEFAULT_LINKS), recent: [] };
+      if (!stored) return { version: STATE_VERSION, links: clone(DEFAULT_LINKS), recent: [] };
       var parsed = JSON.parse(stored);
       return {
-        links: Array.isArray(parsed.links) ? parsed.links.map(normalizeLink) : clone(DEFAULT_LINKS),
+        version: STATE_VERSION,
+        links: migrateStoredLinks(parsed.links, parsed.version || 1),
         recent: Array.isArray(parsed.recent) ? parsed.recent.map(normalizeLink).slice(0, 6) : []
       };
     } catch (error) {
-      return { links: clone(DEFAULT_LINKS), recent: [] };
+      return { version: STATE_VERSION, links: clone(DEFAULT_LINKS), recent: [] };
     }
   }
 
   function saveState() {
+    state.version = STATE_VERSION;
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function normalizeLinks(links) {
+    return (links || []).map(normalizeLink).filter(function (link) {
+      return link.label && link.url;
+    });
+  }
+
+  function migrateStoredLinks(links, version) {
+    var normalized = normalizeLinks(Array.isArray(links) ? links : clone(DEFAULT_LINKS));
+    if (version >= STATE_VERSION) return normalized.length ? normalized : clone(DEFAULT_LINKS);
+
+    var byUrl = {};
+    normalized.forEach(function (link) {
+      byUrl[safeUrl(link.url)] = link;
+    });
+
+    var defaultUrls = urlSet(DEFAULT_LINKS);
+    var legacyAutoUrls = urlSet(LEGACY_AUTO_URLS.map(function (url) {
+      return { url: url };
+    }));
+    var migrated = DEFAULT_LINKS.map(function (link) {
+      var url = safeUrl(link.url);
+      var stored = byUrl[url];
+      if (!stored || stored.label === LEGACY_DEFAULT_LABELS[url]) return normalizeLink(link);
+      return normalizeLink(stored);
+    });
+
+    normalized.forEach(function (link) {
+      var url = safeUrl(link.url);
+      if (defaultUrls[url] || legacyAutoUrls[url]) return;
+      migrated.push(link);
+    });
+
+    return migrated;
+  }
+
+  function urlSet(links) {
+    var set = {};
+    (links || []).forEach(function (link) {
+      set[safeUrl(link.url)] = true;
+    });
+    return set;
   }
 
   function normalizeLink(link, index) {
