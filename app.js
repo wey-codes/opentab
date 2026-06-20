@@ -2,7 +2,9 @@
   var STORAGE_KEY = "opentab-state-v1";
   var STATE_VERSION = 6;
   var SMART_SLOT_COUNT = 2;
-  var HISTORY_FREQUENCY_SCAN_LIMIT = 1000;
+  var HISTORY_FREQUENCY_SCAN_LIMIT = 10000;
+  var HISTORY_REFRESH_DEBOUNCE_MS = 250;
+  var HISTORY_RETRY_DELAYS = [300, 1200, 3000];
 
   var DEFAULT_LINKS = [
     {
@@ -103,6 +105,7 @@
 
   var state = loadState();
   var smartLinks = [];
+  var historyRefreshTimer = 0;
 
   var els = {
     shell: document.querySelector(".shell"),
@@ -128,8 +131,7 @@
 
   function init() {
     wireEvents();
-    refreshMainLinks();
-    renderRecent();
+    refreshOpenTab();
   }
 
   function wireEvents() {
@@ -148,13 +150,12 @@
       state.links = clone(DEFAULT_LINKS);
       saveState();
       fillSettings();
-      refreshMainLinks();
-      renderRecent();
+      refreshOpenTab();
     });
     els.clearRecent.addEventListener("click", function () {
       state.recent = [];
       saveState();
-      renderRecent();
+      refreshOpenTab();
     });
     els.exportConfig.addEventListener("click", exportConfig);
     els.importConfig.addEventListener("click", function () {
@@ -167,21 +168,55 @@
       closeSettings();
     });
     window.addEventListener("resize", applyGridShape);
+    window.addEventListener("focus", scheduleChromeHistoryRefresh);
+    window.addEventListener("pageshow", scheduleChromeHistoryRefresh);
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden) scheduleChromeHistoryRefresh();
+    });
   }
 
-  function refreshMainLinks() {
+  function refreshOpenTab() {
     state.links = normalizeLinks(state.links);
     smartLinks = buildLocalSmartLinks();
     renderLinks();
 
+    if (!isChromeHistoryAvailable()) {
+      setHistoryMode("local");
+      renderLocalRecent();
+      return;
+    }
+
+    setHistoryMode("chrome");
+    refreshChromeHistoryData(0);
+  }
+
+  function scheduleChromeHistoryRefresh() {
     if (!isChromeHistoryAvailable()) return;
 
+    window.clearTimeout(historyRefreshTimer);
+    historyRefreshTimer = window.setTimeout(function () {
+      refreshChromeHistoryData(0);
+    }, HISTORY_REFRESH_DEBOUNCE_MS);
+  }
+
+  function refreshChromeHistoryData(attempt) {
+    setHistoryMode("chrome");
     queryChromeHistory(HISTORY_FREQUENCY_SCAN_LIMIT, function (items) {
       smartLinks = buildFrequentSmartLinks(items);
       renderLinks();
+      renderChromeHistoryLinks(items);
     }, function () {
+      if (attempt < HISTORY_RETRY_DELAYS.length) {
+        historyRefreshTimer = window.setTimeout(function () {
+          refreshChromeHistoryData(attempt + 1);
+        }, HISTORY_RETRY_DELAYS[attempt]);
+        return;
+      }
+
+      setHistoryMode("local");
       smartLinks = buildLocalSmartLinks();
       renderLinks();
+      renderLocalRecent();
     });
   }
 
@@ -233,15 +268,6 @@
     applyGridShape();
   }
 
-  function renderRecent() {
-    if (isChromeHistoryAvailable()) {
-      renderChromeHistory();
-      return;
-    }
-
-    renderLocalRecent();
-  }
-
   function renderLocalRecent() {
     els.recentLabel.textContent = "Recent";
     els.recentStrip.setAttribute("aria-label", "Recently opened");
@@ -255,33 +281,31 @@
     renderRecentLinks(recent);
   }
 
-  function renderChromeHistory() {
+  function renderChromeHistoryLinks(items) {
     els.recentLabel.textContent = "History";
     els.recentStrip.setAttribute("aria-label", "Chrome history");
     els.clearRecent.hidden = true;
 
-    queryChromeHistory(25, function (items) {
-      var seen = {};
-      var historyLinks = items
-        .filter(function (item) {
-          if (!item || !usableHistoryUrl(item.url)) return false;
-          var url = safeUrl(item.url);
-          if (seen[url]) return false;
-          seen[url] = true;
-          return true;
-        })
-        .map(function (item, index) {
-          return normalizeLink({
-            id: "history-" + index,
-            label: item.title || domainLabel(item.url) || "History",
-            url: item.url,
-            icon: faviconUrl(item.url)
-          }, index);
-        })
-        .slice(0, 6);
+    var seen = {};
+    var historyLinks = items
+      .filter(function (item) {
+        if (!item || !usableHistoryUrl(item.url)) return false;
+        var url = safeUrl(item.url);
+        if (seen[url]) return false;
+        seen[url] = true;
+        return true;
+      })
+      .map(function (item, index) {
+        return normalizeLink({
+          id: "history-" + index,
+          label: item.title || domainLabel(item.url) || "History",
+          url: item.url,
+          icon: faviconUrl(item.url)
+        }, index);
+      })
+      .slice(0, 6);
 
-      renderRecentLinks(historyLinks);
-    }, renderLocalRecent);
+    renderRecentLinks(historyLinks);
   }
 
   function historyQueryFailed(fallback) {
@@ -354,11 +378,15 @@
       return safeUrl(item.url) !== entry.url;
     })).slice(0, 6);
     saveState();
-    renderRecent();
+    refreshOpenTab();
   }
 
   function isChromeHistoryAvailable() {
     return Boolean(window.chrome && chrome.history && typeof chrome.history.search === "function");
+  }
+
+  function setHistoryMode(mode) {
+    document.documentElement.dataset.historyMode = mode;
   }
 
   function usableHistoryUrl(value) {
@@ -568,8 +596,7 @@
       });
 
     saveState();
-    refreshMainLinks();
-    renderRecent();
+    refreshOpenTab();
   }
 
   function exportConfig() {
@@ -596,8 +623,7 @@
         state.recent = Array.isArray(imported.recent) ? imported.recent.map(normalizeLink).slice(0, 6) : [];
         saveState();
         fillSettings();
-        refreshMainLinks();
-        renderRecent();
+        refreshOpenTab();
       } catch (error) {
         window.alert("OpenTab could not read that links file.");
       } finally {

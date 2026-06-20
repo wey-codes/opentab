@@ -12,6 +12,7 @@ It is a static, local-first Chrome new tab launcher. There is no account, backen
 - Keeps ten pinned links editable by the user.
 - Adds up to two smart slots from frequent Chrome history when installed as a Chrome extension.
 - Shows a thin recent-history strip in extension mode.
+- Refreshes Chrome history whenever the new tab page loads or becomes active.
 - Works as plain static files or as an unpacked Chrome extension.
 - Stores settings locally in the current browser.
 
@@ -38,7 +39,7 @@ Default pinned links:
 6. Choose the `opentab` folder.
 7. Open a new tab.
 
-Chrome may show that OpenTab can read browsing history. OpenTab uses that permission only inside your browser to fill the recent strip and the two smart slots. Nothing is sent to a server because there is no server.
+Chrome may show that OpenTab can read browsing history. OpenTab uses that permission only inside your browser to fill the recent strip and the two smart slots. It checks history on load and again when the tab becomes active. Nothing is sent to a server because there is no server.
 
 ## Use Without Installing An Extension
 
@@ -48,7 +49,7 @@ Open `index.html` directly in a browser, or serve the folder with any static fil
 file:///path/to/opentab/index.html
 ```
 
-The plain file/static version cannot read Chrome history, so it does not guess your most-used sites. It still keeps the pinned links and can show a local recent-click strip for links opened from OpenTab.
+The plain file/static version cannot read Chrome history, so it does not guess your most-used sites. A hosted URL opened through a new-tab redirect extension has the same browser limit. To use the history strip and smart slots, install OpenTab itself as the Chrome extension.
 
 ## Customize
 
