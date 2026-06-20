@@ -1,8 +1,10 @@
 {
   "manifest_version": 3,
   "name": "OpenTab",
-  "description": "A simple paper-style new tab launcher for favorite links.",
+  "short_name": "OpenTab",
+  "description": "A simple local-first new tab launcher for favorite links.",
   "version": "0.1.0",
+  "offline_enabled": true,
   "permissions": [
     "history"
   ],
