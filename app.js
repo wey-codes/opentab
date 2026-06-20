@@ -87,10 +87,10 @@
     },
     {
       id: id(),
-      label: "Wikipedia",
-      url: "https://www.wikipedia.org/",
-      icon: "https://www.wikipedia.org/static/favicon/wikipedia.ico",
-      accent: "#71717a"
+      label: "LinkedIn",
+      url: "https://www.linkedin.com/",
+      icon: "https://static.licdn.com/sc/h/akt4ae504epesldzj74dzred8",
+      accent: "#0a66c2"
     }
   ];
 

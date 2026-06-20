@@ -31,7 +31,7 @@ Default pinned links:
 Static fallback smart links:
 
 1. Drive
-2. Wikipedia
+2. LinkedIn
 
 ## Install In Chrome
 
