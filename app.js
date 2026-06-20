@@ -77,23 +77,6 @@
     }
   ];
 
-  var SMART_FALLBACK_LINKS = [
-    {
-      id: id(),
-      label: "Drive",
-      url: "https://drive.google.com/",
-      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fdrive.google.com%2F",
-      accent: "#34a853"
-    },
-    {
-      id: id(),
-      label: "LinkedIn",
-      url: "https://www.linkedin.com/",
-      icon: "https://static.licdn.com/sc/h/akt4ae504epesldzj74dzred8",
-      accent: "#0a66c2"
-    }
-  ];
-
   var LEGACY_AUTO_URLS = [
     "https://drive.google.com/",
     "https://www.perplexity.ai/",
@@ -188,7 +171,7 @@
 
   function refreshMainLinks() {
     state.links = normalizeLinks(state.links);
-    smartLinks = buildFallbackSmartLinks();
+    smartLinks = buildLocalSmartLinks();
     renderLinks();
 
     if (!isChromeHistoryAvailable()) return;
@@ -197,7 +180,7 @@
       smartLinks = buildFrequentSmartLinks(items);
       renderLinks();
     }, function () {
-      smartLinks = buildFallbackSmartLinks();
+      smartLinks = buildLocalSmartLinks();
       renderLinks();
     });
   }
@@ -389,8 +372,8 @@
     }
   }
 
-  function buildFallbackSmartLinks() {
-    return uniqueSmartLinks((state.recent || []).concat(SMART_FALLBACK_LINKS), state.links, SMART_SLOT_COUNT);
+  function buildLocalSmartLinks() {
+    return uniqueSmartLinks(state.recent || [], state.links, SMART_SLOT_COUNT);
   }
 
   function buildFrequentSmartLinks(items) {
@@ -443,7 +426,7 @@
         }, index);
       });
 
-    return uniqueSmartLinks(historyLinks.concat(SMART_FALLBACK_LINKS), state.links, SMART_SLOT_COUNT);
+    return uniqueSmartLinks(historyLinks, state.links, SMART_SLOT_COUNT);
   }
 
   function uniqueSmartLinks(candidates, excludeLinks, limit) {
@@ -490,11 +473,15 @@
     var columns;
 
     if (mobile) {
-      columns = count === 1 ? 1 : count > 8 ? 3 : 2;
+      columns = count === 1 ? 1 : count > 10 ? 3 : 2;
     } else if (count <= 4) {
       columns = count;
     } else if (count <= 6) {
       columns = 3;
+    } else if (count === 9) {
+      columns = 3;
+    } else if (count === 10) {
+      columns = 5;
     } else {
       columns = 4;
     }

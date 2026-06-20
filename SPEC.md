@@ -8,15 +8,15 @@ OpenTab is a local-first new-tab launchpad. The main job is to make pinned links
 
 - The first screen is only the link launchpad plus tiny controls for add/settings.
 - Default links fill one viewport without scrolling on desktop and mobile, including when the recent/history strip is visible.
-- The default big grid is ten pinned links plus two smart frequent-history slots.
+- The extension grid is ten pinned links plus up to two smart frequent-history slots.
 - Installed extension mode can show real Chrome history in a thin top strip using the `history` permission.
-- Plain file/static mode keeps a recent OpenTab-click fallback without browser-history access.
+- Plain file/static mode does not guess most-used sites without browser-history access.
 - Link tiles are large, evenly sized, and easy to click.
 - Link tiles show a favicon/logo preview with fallback initials.
 - Users can edit, add, remove, export, import, and restore links.
 - The page works as a static website without a build step.
 - The folder can be loaded as an unpacked Chrome extension that overrides the new tab page.
-- No account, backend, or analytics are required. Extension mode uses Chrome's `history` permission only for the history strip.
+- No account, backend, or analytics are required. Extension mode uses Chrome's `history` permission only for the history strip and smart slots.
 - No animated background, required onboarding, focus panel, routine widget, clock, or money counter in V1.
 
 ## Product Principles
@@ -33,7 +33,7 @@ OpenTab is a local-first new-tab launchpad. The main job is to make pinned links
 - Use paper-like surfaces, black ink borders, and offset shadows for separation.
 - Put the service icon first, then the link name, then the domain.
 - Use each link accent only as a soft paper wash behind the icon area, not as the whole card.
-- Keep the default twelve links and the optional recent/history strip visible on one screen with no scrolling.
+- Keep the pinned links, up to two smart links, and the optional recent/history strip visible on one screen with no scrolling.
 - Avoid 3D scenes, glossy effects, bright white glare, or text explaining how the page works.
 
 ## Research Notes
