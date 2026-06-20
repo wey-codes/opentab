@@ -6,6 +6,10 @@ It is a static, local-first Chrome new tab launcher. There is no account, backen
 
 ![OpenTab screenshot](./docs/screenshot.jpg)
 
+## Live Demo
+
+OpenTab is live at [wey-codes.github.io/opentab](https://wey-codes.github.io/opentab/).
+
 ## What It Does
 
 - Shows the link grid on one screen.
