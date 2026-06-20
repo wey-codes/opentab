@@ -1,6 +1,6 @@
 (function () {
   var STORAGE_KEY = "opentab-state-v1";
-  var STATE_VERSION = 2;
+  var STATE_VERSION = 3;
   var SMART_SLOT_COUNT = 2;
   var HISTORY_FREQUENCY_SCAN_LIMIT = 1000;
 
@@ -39,23 +39,30 @@
       url: "https://calendar.google.com/",
       icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fcalendar.google.com%2F",
       accent: "#4285f4"
-    }
-  ];
-
-  var SMART_FALLBACK_LINKS = [
+    },
     {
       id: id(),
       label: "Drive",
       url: "https://drive.google.com/",
       icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fdrive.google.com%2F",
       accent: "#34a853"
-    },
+    }
+  ];
+
+  var SMART_FALLBACK_LINKS = [
     {
       id: id(),
       label: "Perplexity",
       url: "https://www.perplexity.ai/",
       icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fwww.perplexity.ai%2F",
       accent: "#20b8b8"
+    },
+    {
+      id: id(),
+      label: "GitHub",
+      url: "https://github.com/",
+      icon: "https://github.com/favicon.ico",
+      accent: "#6b7280"
     }
   ];
 
@@ -70,7 +77,8 @@
     "https://claude.ai/": "Claude",
     "https://www.youtube.com/": "YouTube",
     "https://mail.google.com/": "Gmail",
-    "https://calendar.google.com/": "Calendar"
+    "https://calendar.google.com/": "Calendar",
+    "https://drive.google.com/": "Drive"
   };
 
   var state = loadState();

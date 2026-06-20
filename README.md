@@ -28,7 +28,7 @@ The extension uses Chrome's `history` permission so the top strip can show real 
 
 ## Features
 
-- Five pinned favorite-link tiles by default: YouTube, Claude, OpenAI, Email, and Calendar
+- Six pinned favorite-link tiles by default: YouTube, Claude, OpenAI, Email, Calendar, and Drive
 - Two smart tiles from frequently used Chrome history when installed as an extension
 - History strip from Chrome history when installed as an extension
 - Recent strip fallback for links opened from OpenTab in the plain file/static version
