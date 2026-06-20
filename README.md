@@ -22,15 +22,15 @@ Default pinned links:
 3. OpenAI
 4. Email
 5. Calendar
-6. Drive
-7. Search
-8. Maps
+6. X
+7. Box
+8. Facebook Ads
 
 Static fallback smart links:
 
-1. Perplexity
-2. GitHub
-3. Reddit
+1. GitHub
+2. Reddit
+3. Drive
 4. Wikipedia
 
 ## Install In Chrome

@@ -1,6 +1,6 @@
 (function () {
   var STORAGE_KEY = "opentab-state-v1";
-  var STATE_VERSION = 4;
+  var STATE_VERSION = 5;
   var SMART_SLOT_COUNT = 4;
   var HISTORY_FREQUENCY_SCAN_LIMIT = 1000;
 
@@ -42,35 +42,28 @@
     },
     {
       id: id(),
-      label: "Drive",
-      url: "https://drive.google.com/",
-      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fdrive.google.com%2F",
-      accent: "#34a853"
+      label: "X",
+      url: "https://x.com/",
+      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fx.com%2F",
+      accent: "#111111"
     },
     {
       id: id(),
-      label: "Search",
-      url: "https://www.google.com/",
-      icon: "https://www.google.com/favicon.ico",
-      accent: "#fbbc04"
+      label: "Box",
+      url: "https://app.box.com/",
+      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fapp.box.com%2F",
+      accent: "#0061d5"
     },
     {
       id: id(),
-      label: "Maps",
-      url: "https://maps.google.com/",
-      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fmaps.google.com%2F",
-      accent: "#0f9d58"
+      label: "Facebook Ads",
+      url: "https://adsmanager.facebook.com/",
+      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fadsmanager.facebook.com%2F",
+      accent: "#1877f2"
     }
   ];
 
   var SMART_FALLBACK_LINKS = [
-    {
-      id: id(),
-      label: "Perplexity",
-      url: "https://www.perplexity.ai/",
-      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fwww.perplexity.ai%2F",
-      accent: "#20b8b8"
-    },
     {
       id: id(),
       label: "GitHub",
@@ -87,6 +80,13 @@
     },
     {
       id: id(),
+      label: "Drive",
+      url: "https://drive.google.com/",
+      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fdrive.google.com%2F",
+      accent: "#34a853"
+    },
+    {
+      id: id(),
       label: "Wikipedia",
       url: "https://www.wikipedia.org/",
       icon: "https://www.wikipedia.org/static/favicon/wikipedia.ico",
@@ -97,7 +97,9 @@
   var LEGACY_AUTO_URLS = [
     "https://drive.google.com/",
     "https://www.perplexity.ai/",
-    "https://www.notion.so/"
+    "https://www.notion.so/",
+    "https://www.google.com/",
+    "https://maps.google.com/"
   ];
 
   var LEGACY_DEFAULT_LABELS = {
@@ -108,7 +110,10 @@
     "https://calendar.google.com/": "Calendar",
     "https://drive.google.com/": "Drive",
     "https://www.google.com/": "Search",
-    "https://maps.google.com/": "Maps"
+    "https://maps.google.com/": "Maps",
+    "https://x.com/": "X",
+    "https://app.box.com/": "Box",
+    "https://adsmanager.facebook.com/": "Facebook Ads"
   };
 
   var state = loadState();
