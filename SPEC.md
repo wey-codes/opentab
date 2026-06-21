@@ -8,7 +8,7 @@ OpenTab is a local-first new-tab launchpad. The main job is to make pinned links
 
 - The first screen is only the link launchpad plus tiny controls for add/settings.
 - Default links fill one viewport without scrolling on desktop and mobile, including when the recent/history strip is visible.
-- The extension grid is ten pinned links plus up to two smart frequent-history slots.
+- The extension grid is fourteen pinned links plus up to two smart frequent-history slots.
 - Installed extension mode can show real Chrome history in a thin top strip using the `history` permission.
 - Extension mode refreshes Chrome history on load, focus, page-show, and visible-tab return.
 - Plain file/static mode does not guess most-used sites without browser-history access.

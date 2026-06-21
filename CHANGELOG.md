@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1
+
+- Expanded the default pinned set with Enverus, NM SOS, DrillingInfo, and Hostinger.
+- Retired saved Daily Routine/Notion links during migration.
+- Tuned the mobile grid to keep sixteen total tiles visible without scrolling.
+
 ## 0.1.0
 
 - Added paper-style full-screen link grid.

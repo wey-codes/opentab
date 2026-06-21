@@ -1,6 +1,6 @@
 (function () {
   var STORAGE_KEY = "opentab-state-v1";
-  var STATE_VERSION = 6;
+  var STATE_VERSION = 7;
   var SMART_SLOT_COUNT = 2;
   var HISTORY_FREQUENCY_SCAN_LIMIT = 10000;
   var HISTORY_REFRESH_DEBOUNCE_MS = 250;
@@ -76,6 +76,34 @@
       url: "https://www.reddit.com/",
       icon: "https://www.redditstatic.com/desktop2x/img/favicon/favicon-96x96.png",
       accent: "#ff4500"
+    },
+    {
+      id: id(),
+      label: "Enverus",
+      url: "https://app.enverus.com/",
+      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fapp.enverus.com%2F",
+      accent: "#2557a7"
+    },
+    {
+      id: id(),
+      label: "NM SOS",
+      url: "https://enterprise.sos.nm.gov/",
+      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fenterprise.sos.nm.gov%2F",
+      accent: "#2f6fed"
+    },
+    {
+      id: id(),
+      label: "DrillingInfo",
+      url: "https://app.drillinginfo.com/",
+      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fapp.drillinginfo.com%2F",
+      accent: "#0f766e"
+    },
+    {
+      id: id(),
+      label: "Hostinger",
+      url: "https://hpanel.hostinger.com/",
+      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fhpanel.hostinger.com%2F",
+      accent: "#673de6"
     }
   ];
 
@@ -117,7 +145,11 @@
     "https://app.box.com/": "Box",
     "https://adsmanager.facebook.com/": "Facebook Ads",
     "https://github.com/": "GitHub",
-    "https://www.reddit.com/": "Reddit"
+    "https://www.reddit.com/": "Reddit",
+    "https://app.enverus.com/": "Enverus",
+    "https://enterprise.sos.nm.gov/": "NM SOS",
+    "https://app.drillinginfo.com/": "DrillingInfo",
+    "https://hpanel.hostinger.com/": "Hostinger"
   };
 
   var state = loadState();
@@ -540,7 +572,7 @@
     var columns;
 
     if (mobile) {
-      columns = count === 1 ? 1 : count > 10 ? 3 : 2;
+      columns = count === 1 ? 1 : count > 12 ? 4 : count > 10 ? 3 : 2;
     } else if (count <= 4) {
       columns = count;
     } else if (count <= 6) {
@@ -720,11 +752,19 @@
 
     normalized.forEach(function (link) {
       var url = safeUrl(link.url);
+      if (isRetiredRoutineLink(link)) return;
       if (defaultUrls[url] || legacyAutoUrls[url]) return;
       migrated.push(link);
     });
 
     return migrated;
+  }
+
+  function isRetiredRoutineLink(link) {
+    var label = String(link.label || "").toLowerCase();
+    var host = domainLabel(link.url);
+    var looksLikeRoutine = label.indexOf("routine") !== -1 || label.indexOf("daily") !== -1 || label === "notion";
+    return host.indexOf("notion.") !== -1 && looksLikeRoutine;
   }
 
   function urlSet(links) {

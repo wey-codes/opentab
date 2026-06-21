@@ -13,7 +13,7 @@ OpenTab is live at [wey-codes.github.io/opentab](https://wey-codes.github.io/ope
 ## What It Does
 
 - Shows the link grid on one screen.
-- Keeps ten pinned links editable by the user.
+- Keeps fourteen pinned links editable by the user.
 - Adds up to two smart slots from frequent Chrome history when installed as a Chrome extension.
 - Shows a thin recent-history strip in extension mode.
 - Keeps two starter/recent slots visible in mobile and static web mode.
@@ -33,6 +33,10 @@ Default pinned links:
 8. Facebook Ads
 9. GitHub
 10. Reddit
+11. Enverus
+12. NM SOS
+13. DrillingInfo
+14. Hostinger
 
 ## Install In Chrome
 

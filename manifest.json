@@ -3,7 +3,7 @@
   "name": "OpenTab",
   "short_name": "OpenTab",
   "description": "A simple local-first new tab launcher for favorite links.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "offline_enabled": true,
   "icons": {
     "16": "icons/icon-16.png",
