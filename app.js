@@ -1,7 +1,7 @@
 (function () {
   var STORAGE_KEY = "opentab-state-v1";
-  var STATE_VERSION = 8;
-  var PINNED_GRID_TARGET = 15;
+  var STATE_VERSION = 9;
+  var PINNED_GRID_TARGET = 12;
   var SMART_LINK_COUNT = 6;
   var HISTORY_FREQUENCY_SCAN_LIMIT = 10000;
   var HISTORY_REFRESH_DEBOUNCE_MS = 250;
@@ -45,6 +45,20 @@
     },
     {
       id: id(),
+      label: "Drive",
+      url: "https://drive.google.com/",
+      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fdrive.google.com%2F",
+      accent: "#34a853"
+    },
+    {
+      id: id(),
+      label: "Docs",
+      url: "https://docs.google.com/",
+      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fdocs.google.com%2F",
+      accent: "#4285f4"
+    },
+    {
+      id: id(),
       label: "X",
       url: "https://x.com/",
       icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fx.com%2F",
@@ -73,41 +87,6 @@
     },
     {
       id: id(),
-      label: "Reddit",
-      url: "https://www.reddit.com/",
-      icon: "https://www.redditstatic.com/desktop2x/img/favicon/favicon-96x96.png",
-      accent: "#ff4500"
-    },
-    {
-      id: id(),
-      label: "Enverus",
-      url: "https://app.enverus.com/",
-      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fapp.enverus.com%2F",
-      accent: "#2557a7"
-    },
-    {
-      id: id(),
-      label: "NM SOS",
-      url: "https://enterprise.sos.nm.gov/",
-      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fenterprise.sos.nm.gov%2F",
-      accent: "#2f6fed"
-    },
-    {
-      id: id(),
-      label: "DrillingInfo",
-      url: "https://app.drillinginfo.com/",
-      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fapp.drillinginfo.com%2F",
-      accent: "#0f766e"
-    },
-    {
-      id: id(),
-      label: "Hostinger",
-      url: "https://hpanel.hostinger.com/",
-      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fhpanel.hostinger.com%2F",
-      accent: "#673de6"
-    },
-    {
-      id: id(),
       label: "Slack",
       url: "https://app.slack.com/client",
       icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fslack.com%2F",
@@ -118,22 +97,43 @@
   var LOCAL_STARTER_LINKS = [
     {
       id: id(),
-      label: "Drive",
-      url: "https://drive.google.com/",
-      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fdrive.google.com%2F",
-      accent: "#34a853"
+      label: "Excalidraw",
+      url: "https://excalidraw.com/",
+      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fexcalidraw.com%2F",
+      accent: "#6965db"
     },
     {
       id: id(),
-      label: "Docs",
-      url: "https://docs.google.com/",
-      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fdocs.google.com%2F",
-      accent: "#4285f4"
+      label: "Contacts",
+      url: "https://contacts.google.com/",
+      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fcontacts.google.com%2F",
+      accent: "#1a73e8"
+    },
+    {
+      id: id(),
+      label: "Chrome Store",
+      url: "https://chromewebstore.google.com/",
+      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fchromewebstore.google.com%2F",
+      accent: "#fbbc04"
+    },
+    {
+      id: id(),
+      label: "CoinGecko",
+      url: "https://www.coingecko.com/",
+      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fwww.coingecko.com%2F",
+      accent: "#8dc63f"
     }
   ];
 
+  var RETIRED_PINNED_URLS = [
+    "https://www.reddit.com/",
+    "https://app.enverus.com/",
+    "https://enterprise.sos.nm.gov/",
+    "https://app.drillinginfo.com/",
+    "https://hpanel.hostinger.com/"
+  ];
+
   var LEGACY_AUTO_URLS = [
-    "https://drive.google.com/",
     "https://www.perplexity.ai/",
     "https://www.notion.so/",
     "https://www.google.com/",
@@ -147,17 +147,13 @@
     "https://mail.google.com/": "Gmail",
     "https://calendar.google.com/": "Calendar",
     "https://drive.google.com/": "Drive",
+    "https://docs.google.com/": "Docs",
     "https://www.google.com/": "Search",
     "https://maps.google.com/": "Maps",
     "https://x.com/": "X",
     "https://app.box.com/": "Box",
     "https://adsmanager.facebook.com/": "Facebook Ads",
     "https://github.com/": "GitHub",
-    "https://www.reddit.com/": "Reddit",
-    "https://app.enverus.com/": "Enverus",
-    "https://enterprise.sos.nm.gov/": "NM SOS",
-    "https://app.drillinginfo.com/": "DrillingInfo",
-    "https://hpanel.hostinger.com/": "Hostinger",
     "https://app.slack.com/client": "Slack"
   };
 
@@ -604,8 +600,10 @@
       columns = 3;
     } else if (count === 9) {
       columns = 3;
-    } else if (count === 10 || count >= PINNED_GRID_TARGET) {
+    } else if (count === 10) {
       columns = 5;
+    } else if (count >= PINNED_GRID_TARGET) {
+      columns = 4;
     } else {
       columns = 4;
     }
@@ -765,6 +763,9 @@
     });
 
     var defaultUrls = urlSet(DEFAULT_LINKS);
+    var retiredPinnedUrls = urlSet(RETIRED_PINNED_URLS.map(function (url) {
+      return { url: url };
+    }));
     var legacyAutoUrls = urlSet(LEGACY_AUTO_URLS.map(function (url) {
       return { url: url };
     }));
@@ -779,6 +780,7 @@
     normalized.forEach(function (link) {
       var url = safeUrl(link.url);
       if (isRetiredRoutineLink(link)) return;
+      if (retiredPinnedUrls[url]) return;
       if (defaultUrls[url] || legacyAutoUrls[url]) return;
       customLinks.push(link);
     });

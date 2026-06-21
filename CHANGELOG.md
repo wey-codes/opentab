@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.3
+
+- Reduced the default pinned grid to twelve links.
+- Removed Reddit, Enverus, NM SOS, DrillingInfo, and Hostinger from pinned defaults and migrations.
+- Added Drive and Docs as pinned defaults.
+
 ## 0.1.2
 
 - Changed the layout to top recent strip, fifteen pinned tiles, and bottom frequent/favorites strip.

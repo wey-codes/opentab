@@ -13,7 +13,7 @@ OpenTab is live at [wey-codes.github.io/opentab](https://wey-codes.github.io/ope
 ## What It Does
 
 - Shows the link grid on one screen.
-- Keeps fifteen pinned links editable by the user.
+- Keeps twelve pinned links editable by the user.
 - Shows frequent Chrome-history links in a bottom strip when installed as a Chrome extension.
 - Shows a thin recent-history strip in extension mode.
 - Keeps starter/favorite links visible in a bottom strip in mobile and static web mode.
@@ -28,16 +28,13 @@ Default pinned links:
 3. OpenAI
 4. Email
 5. Calendar
-6. X
-7. Box
-8. Facebook Ads
-9. GitHub
-10. Reddit
-11. Enverus
-12. NM SOS
-13. DrillingInfo
-14. Hostinger
-15. Slack
+6. Drive
+7. Docs
+8. X
+9. Box
+10. Facebook Ads
+11. GitHub
+12. Slack
 
 ## Install In Chrome
 
