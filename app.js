@@ -1,7 +1,8 @@
 (function () {
   var STORAGE_KEY = "opentab-state-v1";
-  var STATE_VERSION = 7;
-  var SMART_SLOT_COUNT = 2;
+  var STATE_VERSION = 8;
+  var PINNED_GRID_TARGET = 15;
+  var SMART_LINK_COUNT = 6;
   var HISTORY_FREQUENCY_SCAN_LIMIT = 10000;
   var HISTORY_REFRESH_DEBOUNCE_MS = 250;
   var HISTORY_RETRY_DELAYS = [300, 1200, 3000];
@@ -104,6 +105,13 @@
       url: "https://hpanel.hostinger.com/",
       icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fhpanel.hostinger.com%2F",
       accent: "#673de6"
+    },
+    {
+      id: id(),
+      label: "Slack",
+      url: "https://app.slack.com/client",
+      icon: "https://www.google.com/s2/favicons?sz=128&domain_url=https%3A%2F%2Fslack.com%2F",
+      accent: "#611f69"
     }
   ];
 
@@ -149,7 +157,8 @@
     "https://app.enverus.com/": "Enverus",
     "https://enterprise.sos.nm.gov/": "NM SOS",
     "https://app.drillinginfo.com/": "DrillingInfo",
-    "https://hpanel.hostinger.com/": "Hostinger"
+    "https://hpanel.hostinger.com/": "Hostinger",
+    "https://app.slack.com/client": "Slack"
   };
 
   var state = loadState();
@@ -162,6 +171,9 @@
     recentStrip: document.getElementById("recentStrip"),
     recentLabel: document.getElementById("recentLabel"),
     recentList: document.getElementById("recentList"),
+    smartStrip: document.getElementById("smartStrip"),
+    smartLabel: document.getElementById("smartLabel"),
+    smartList: document.getElementById("smartList"),
     quickAddLink: document.getElementById("quickAddLink"),
     settingsButton: document.getElementById("settingsButton"),
     dialog: document.getElementById("settingsDialog"),
@@ -229,6 +241,7 @@
     state.links = normalizeLinks(state.links);
     smartLinks = buildLocalSmartLinks();
     renderLinks();
+    renderSmartLinks(smartLinks, "Favorites");
 
     if (!isChromeHistoryAvailable()) {
       setHistoryMode("local");
@@ -255,6 +268,7 @@
       smartLinks = buildFrequentSmartLinks(items);
       renderLinks();
       renderChromeHistoryLinks(items);
+      renderSmartLinks(smartLinks, "Frequent");
     }, function () {
       if (attempt < HISTORY_RETRY_DELAYS.length) {
         historyRefreshTimer = window.setTimeout(function () {
@@ -267,12 +281,13 @@
       smartLinks = buildLocalSmartLinks();
       renderLinks();
       renderLocalRecent();
+      renderSmartLinks(smartLinks, "Favorites");
     });
   }
 
   function renderLinks() {
     els.linkGrid.innerHTML = "";
-    var displayLinks = state.links.concat(smartLinks);
+    var displayLinks = state.links;
 
     displayLinks.forEach(function (link) {
       var tile = document.createElement("a");
@@ -344,7 +359,7 @@
   }
 
   function buildLocalSmartLinks() {
-    return uniqueSmartLinks((state.recent || []).concat(LOCAL_STARTER_LINKS), state.links, SMART_SLOT_COUNT);
+    return uniqueSmartLinks((state.recent || []).concat(LOCAL_STARTER_LINKS), state.links, SMART_LINK_COUNT);
   }
 
   function renderChromeHistoryLinks(items) {
@@ -401,9 +416,19 @@
   }
 
   function renderRecentLinks(links) {
-    els.recentList.innerHTML = "";
-    els.recentStrip.hidden = links.length === 0;
-    els.shell.classList.toggle("has-recent", links.length > 0);
+    renderStripLinks(links, els.recentList, els.recentStrip, "has-recent");
+  }
+
+  function renderSmartLinks(links, label) {
+    els.smartLabel.textContent = label;
+    els.smartStrip.setAttribute("aria-label", label + " links");
+    renderStripLinks(links, els.smartList, els.smartStrip, "has-smart");
+  }
+
+  function renderStripLinks(links, listEl, stripEl, className) {
+    listEl.innerHTML = "";
+    stripEl.hidden = links.length === 0;
+    els.shell.classList.toggle(className, links.length > 0);
     if (!links.length) return;
 
     links.forEach(function (link) {
@@ -432,7 +457,7 @@
       label.textContent = link.label;
 
       item.append(image, fallback, label);
-      els.recentList.appendChild(item);
+      listEl.appendChild(item);
     });
   }
 
@@ -525,7 +550,7 @@
         }, index);
       });
 
-    return uniqueSmartLinks(historyLinks, state.links, SMART_SLOT_COUNT);
+    return uniqueSmartLinks(historyLinks, state.links, SMART_LINK_COUNT);
   }
 
   function uniqueSmartLinks(candidates, excludeLinks, limit) {
@@ -567,19 +592,19 @@
   }
 
   function applyGridShape() {
-    var count = Math.max(1, els.linkGrid.children.length || state.links.length + smartLinks.length);
+    var count = Math.max(1, els.linkGrid.children.length || state.links.length);
     var mobile = window.innerWidth <= 850;
     var columns;
 
     if (mobile) {
-      columns = count === 1 ? 1 : count > 12 ? 4 : count > 10 ? 3 : 2;
+      columns = count === 1 ? 1 : count >= PINNED_GRID_TARGET ? 3 : count > 10 ? 4 : 2;
     } else if (count <= 4) {
       columns = count;
     } else if (count <= 6) {
       columns = 3;
     } else if (count === 9) {
       columns = 3;
-    } else if (count === 10) {
+    } else if (count === 10 || count >= PINNED_GRID_TARGET) {
       columns = 5;
     } else {
       columns = 4;
@@ -750,14 +775,18 @@
       return normalizeLink(stored);
     });
 
+    var customLinks = [];
     normalized.forEach(function (link) {
       var url = safeUrl(link.url);
       if (isRetiredRoutineLink(link)) return;
       if (defaultUrls[url] || legacyAutoUrls[url]) return;
-      migrated.push(link);
+      customLinks.push(link);
     });
 
-    return migrated;
+    if (!customLinks.length) return migrated;
+    return migrated.slice(0, Math.max(0, PINNED_GRID_TARGET - customLinks.length))
+      .concat(customLinks)
+      .slice(0, PINNED_GRID_TARGET);
   }
 
   function isRetiredRoutineLink(link) {

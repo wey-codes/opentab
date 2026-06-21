@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.2
+
+- Changed the layout to top recent strip, fifteen pinned tiles, and bottom frequent/favorites strip.
+- Moved smart/frequent links out of the main tile grid.
+- Added Slack as the fifteenth default pinned link.
+
 ## 0.1.1
 
 - Expanded the default pinned set with Enverus, NM SOS, DrillingInfo, and Hostinger.

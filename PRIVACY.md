@@ -17,7 +17,7 @@ When OpenTab is installed as a Chrome extension, it asks for the `history` permi
 OpenTab uses that permission only to:
 
 - Show the recent-history strip.
-- Pick two smart link tiles from frequently used sites.
+- Fill the bottom frequent-links strip from frequently used sites.
 
 OpenTab does not send your history anywhere. There is no server to send it to.
 
