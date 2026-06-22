@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0
+
+- Added desktop-extension bookmark mirror mode for the center grid.
+- Kept recent history in the top strip and frequent history in the bottom strip.
+- Added the Chrome `bookmarks` permission for local bookmark reads only.
+
 ## 0.1.3
 
 - Reduced the default pinned grid to twelve links.

@@ -1,6 +1,6 @@
 (function () {
   var STORAGE_KEY = "opentab-state-v1";
-  var STATE_VERSION = 9;
+  var STATE_VERSION = 10;
   var PINNED_GRID_TARGET = 12;
   var SMART_LINK_COUNT = 6;
   var HISTORY_FREQUENCY_SCAN_LIMIT = 10000;
@@ -261,10 +261,11 @@
   function refreshChromeHistoryData(attempt) {
     setHistoryMode("chrome");
     queryChromeHistory(HISTORY_FREQUENCY_SCAN_LIMIT, function (items) {
-      smartLinks = buildFrequentSmartLinks(items);
-      renderLinks();
-      renderChromeHistoryLinks(items);
-      renderSmartLinks(smartLinks, "Frequent");
+      queryChromeBookmarks(function (bookmarks) {
+        renderChromeData(items, bookmarks);
+      }, function () {
+        renderChromeData(items, []);
+      });
     }, function () {
       if (attempt < HISTORY_RETRY_DELAYS.length) {
         historyRefreshTimer = window.setTimeout(function () {
@@ -281,9 +282,19 @@
     });
   }
 
-  function renderLinks() {
+  function renderChromeData(historyItems, bookmarkTree) {
+    var gridLinks = buildBookmarkGridLinks(bookmarkTree, historyItems);
+    var centerLinks = gridLinks.length ? gridLinks : state.links;
+
+    renderLinks(centerLinks);
+    renderChromeHistoryLinks(historyItems);
+    smartLinks = buildFrequentSmartLinks(historyItems, centerLinks);
+    renderSmartLinks(smartLinks, "Frequent");
+  }
+
+  function renderLinks(links) {
     els.linkGrid.innerHTML = "";
-    var displayLinks = state.links;
+    var displayLinks = links || state.links;
 
     displayLinks.forEach(function (link) {
       var tile = document.createElement("a");
@@ -411,6 +422,25 @@
     }
   }
 
+  function queryChromeBookmarks(callback, fallback) {
+    if (!isChromeBookmarksAvailable()) {
+      fallback();
+      return;
+    }
+
+    try {
+      chrome.bookmarks.getTree(function (items) {
+        if (chrome.runtime && chrome.runtime.lastError) {
+          fallback();
+          return;
+        }
+        callback(items || []);
+      });
+    } catch (error) {
+      fallback();
+    }
+  }
+
   function renderRecentLinks(links) {
     renderStripLinks(links, els.recentList, els.recentStrip, "has-recent");
   }
@@ -472,6 +502,10 @@
     return Boolean(window.chrome && chrome.history && typeof chrome.history.search === "function");
   }
 
+  function isChromeBookmarksAvailable() {
+    return Boolean(window.chrome && chrome.bookmarks && typeof chrome.bookmarks.getTree === "function");
+  }
+
   function setHistoryMode(mode) {
     document.documentElement.dataset.historyMode = mode;
   }
@@ -496,8 +530,8 @@
     }
   }
 
-  function buildFrequentSmartLinks(items) {
-    var excludedHosts = hostSet(state.links);
+  function buildFrequentSmartLinks(items, excludeLinks) {
+    var excludedHosts = hostSet(excludeLinks || state.links);
     var byHost = {};
 
     items.forEach(function (item) {
@@ -546,7 +580,113 @@
         }, index);
       });
 
-    return uniqueSmartLinks(historyLinks, state.links, SMART_LINK_COUNT);
+    return uniqueSmartLinks(historyLinks, excludeLinks || state.links, SMART_LINK_COUNT);
+  }
+
+  function buildBookmarkGridLinks(bookmarkTree, historyItems) {
+    var bookmarks = flattenBookmarks(bookmarkTree);
+    if (!bookmarks.length) return [];
+
+    var historyScores = historyScoreMap(historyItems);
+    var byHost = {};
+
+    bookmarks.forEach(function (bookmark, index) {
+      var link = normalizeLink({
+        id: "bookmark-" + index,
+        label: bookmark.title || smartLabel(bookmark),
+        url: bookmark.url,
+        icon: faviconUrl(bookmark.url)
+      }, index);
+
+      var host = domainLabel(link.url);
+      if (!host) return;
+
+      var exactScore = historyScores.urls[safeUrl(link.url)] || { visits: 0, lastVisitTime: 0 };
+      var hostScore = historyScores.hosts[host] || { visits: 0, lastVisitTime: 0 };
+      var score = (exactScore.visits * 1200) + (hostScore.visits * 900) + Number(bookmark.dateAdded || 0) / 100000000;
+      var lastVisitTime = Math.max(exactScore.lastVisitTime || 0, hostScore.lastVisitTime || 0);
+      var existing = byHost[host];
+
+      if (!existing || score > existing.score || (score === existing.score && lastVisitTime > existing.lastVisitTime)) {
+        byHost[host] = {
+          link: link,
+          score: score,
+          lastVisitTime: lastVisitTime,
+          bookmarkIndex: index
+        };
+      }
+    });
+
+    var bookmarkLinks = Object.keys(byHost)
+      .map(function (host) {
+        return byHost[host];
+      })
+      .sort(function (a, b) {
+        if (b.score !== a.score) return b.score - a.score;
+        if (b.lastVisitTime !== a.lastVisitTime) return b.lastVisitTime - a.lastVisitTime;
+        return a.bookmarkIndex - b.bookmarkIndex;
+      })
+      .map(function (entry) {
+        return entry.link;
+      })
+      .slice(0, PINNED_GRID_TARGET);
+
+    if (bookmarkLinks.length >= PINNED_GRID_TARGET) return bookmarkLinks;
+
+    return bookmarkLinks.concat(
+      uniqueSmartLinks(state.links, bookmarkLinks, PINNED_GRID_TARGET - bookmarkLinks.length)
+    );
+  }
+
+  function flattenBookmarks(nodes) {
+    var results = [];
+
+    function visit(node, path) {
+      if (!node) return;
+
+      if (node.url && usableHistoryUrl(node.url)) {
+        results.push({
+          title: node.title || domainLabel(node.url),
+          url: node.url,
+          dateAdded: node.dateAdded || 0,
+          path: path
+        });
+      }
+
+      (node.children || []).forEach(function (child) {
+        visit(child, path.concat(node.title || ""));
+      });
+    }
+
+    (nodes || []).forEach(function (node) {
+      visit(node, []);
+    });
+
+    return results;
+  }
+
+  function historyScoreMap(items) {
+    var urls = {};
+    var hosts = {};
+
+    (items || []).forEach(function (item) {
+      if (!item || !usableHistoryUrl(item.url)) return;
+
+      var url = safeUrl(item.url);
+      var host = domainLabel(url);
+      var visits = Number(item.visitCount || 0);
+      var lastVisitTime = Number(item.lastVisitTime || 0);
+
+      if (!urls[url]) urls[url] = { visits: 0, lastVisitTime: 0 };
+      urls[url].visits += visits;
+      urls[url].lastVisitTime = Math.max(urls[url].lastVisitTime, lastVisitTime);
+
+      if (!hosts[host]) hosts[host] = { visits: 0, lastVisitTime: 0 };
+      hosts[host].visits += visits;
+      hosts[host].lastVisitTime = Math.max(hosts[host].lastVisitTime, lastVisitTime);
+    });
+
+    return { urls: urls, hosts: hosts };
   }
 
   function uniqueSmartLinks(candidates, excludeLinks, limit) {

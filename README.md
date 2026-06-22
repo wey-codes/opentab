@@ -13,7 +13,8 @@ OpenTab is live at [wey-codes.github.io/opentab](https://wey-codes.github.io/ope
 ## What It Does
 
 - Shows the link grid on one screen.
-- Keeps twelve pinned links editable by the user.
+- Mirrors Chrome bookmarks into the center grid when installed as a Chrome extension.
+- Keeps twelve fallback pinned links editable by the user.
 - Shows frequent Chrome-history links in a bottom strip when installed as a Chrome extension.
 - Shows a thin recent-history strip in extension mode.
 - Keeps starter/favorite links visible in a bottom strip in mobile and static web mode.
@@ -46,7 +47,7 @@ Default pinned links:
 6. Choose the `opentab` folder.
 7. Open a new tab.
 
-Chrome may show that OpenTab can read browsing history. OpenTab uses that permission only inside your browser to fill the recent strip and the bottom frequent-links strip. It checks history on load and again when the tab becomes active. Nothing is sent to a server because there is no server.
+Chrome may show that OpenTab can read browsing history and bookmarks. OpenTab uses those permissions only inside your browser to fill the recent strip, choose the center bookmark grid, and fill the bottom frequent-links strip. It checks history and bookmarks on load and again when the tab becomes active. Nothing is sent to a server because there is no server.
 
 ## Use Without Installing An Extension
 
@@ -56,7 +57,7 @@ Open `index.html` directly in a browser, or serve the folder with any static fil
 file:///path/to/opentab/index.html
 ```
 
-The plain file/static version cannot read Chrome history, so it does not know your actual most-used sites. It keeps the top strip and bottom strip visible with local OpenTab clicks plus starter links. A hosted URL opened through a new-tab redirect extension has the same browser limit. To use real browser history in the strips, install OpenTab itself as the Chrome extension.
+The plain file/static version cannot read Chrome history or bookmarks, so it does not know your actual most-used sites or bookmark tree. It keeps the top strip and bottom strip visible with local OpenTab clicks plus starter links. A hosted URL opened through a new-tab redirect extension has the same browser limit. To use real browser history and bookmark mirroring, install OpenTab itself as the Chrome extension.
 
 ## Install On Mobile
 

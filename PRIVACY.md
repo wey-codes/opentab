@@ -10,16 +10,17 @@ That data stays on your device unless you export it yourself.
 
 When installed as a mobile web app, OpenTab may also cache its own app files in your browser so it can launch faster and work offline.
 
-## Chrome History Permission
+## Chrome History And Bookmarks Permissions
 
-When OpenTab is installed as a Chrome extension, it asks for the `history` permission.
+When OpenTab is installed as a Chrome extension, it asks for the `history` and `bookmarks` permissions.
 
-OpenTab uses that permission only to:
+OpenTab uses those permissions only to:
 
 - Show the recent-history strip.
+- Pick center-grid links from your bookmarks.
 - Fill the bottom frequent-links strip from frequently used sites.
 
-OpenTab does not send your history anywhere. There is no server to send it to.
+OpenTab does not send your history or bookmarks anywhere. There is no server to send them to, and OpenTab does not edit your bookmarks.
 
 ## Network Requests
 
